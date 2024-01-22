@@ -5,12 +5,11 @@
 	"main": "server/index.js",
 	"type": "module",
 	"scripts": {
-		"prestart": "cd ./client/ && npm i && npm run build && cd ../server && npm i",
+		"prestart": "cd client && npm run build",
 		"start": "cd server && npm run start"
 	},
 	"devDependencies": {
-		"prettier": "^3.2.4",
-		"concurrently": "^8.2.2"
+		"prettier": "^3.2.4"
 	},
 	"prettier": {
 		"singleQuote": true,

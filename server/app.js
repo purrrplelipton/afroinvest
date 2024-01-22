@@ -23,6 +23,6 @@ app.use(express.static('dist'));
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/', $);
+app.use('/api', $);
 
 export default app;
