@@ -1,4 +1,5 @@
 import { ReactComponent as Loader } from '@app/assets/loader.svg';
+import { ReactComponent as NoData } from '@app/assets/no-data.svg';
 import { GetRiskData } from '@app/services';
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
@@ -162,6 +163,8 @@ const rotate = keyframes`
 `;
 
 const LoaderWrapper = styled.div`
+	font-weight: lighter;
+	font-size: 0.875em;
 	font-size: 1.5em;
 	position: absolute;
 	z-index: 1;
@@ -171,13 +174,37 @@ const LoaderWrapper = styled.div`
 	align-items: center;
 	justify-content: center;
 
-	svg {
+	svg[data-is_loader='true'] {
 		animation: ${rotate} 0.875s linear infinite;
 	}
 
-	p {
-		font-weight: lighter;
-		font-size: 0.875em;
+	div {
+		text-align: center;
+
+		span {
+			color: #f44336;
+			display: inline-block;
+			width: 100%;
+			font-weight: 600;
+		}
+
+		p {
+			margin-inline: auto;
+			font-size: 0.75em;
+			max-width: 65%;
+
+			@media only screen and (min-width: 768px) {
+				max-width: 67%;
+			}
+
+			@media only screen and (min-width: 1024px) {
+				max-width: 62.5%;
+			}
+
+			@media only screen and (min-width: 1366px) {
+				max-width: 57%;
+			}
+		}
 	}
 `;
 
@@ -185,7 +212,7 @@ function RiskScoreSlider() {
 	const [score, setScore] = React.useState(6);
 	const [fetching, setFetching] = React.useState(false);
 	const [scoreData, setScoreData] = React.useState(null);
-	const [fetchingError, setFetchingError] = React.useState(false);
+	const [fetchingError, setFetchingError] = React.useState(null);
 
 	React.useEffect(() => {
 		const timer = setTimeout(async () => {
@@ -193,9 +220,10 @@ function RiskScoreSlider() {
 				setFetching(true);
 				const { data } = await GetRiskData(score);
 				setScoreData(data);
-			} catch ({ message }) {
-				console.log(message);
-				setFetchingError(true);
+			} catch (error) {
+				console.error(error.message);
+				console.log(error);
+				setFetchingError(error);
 			} finally {
 				setFetching(false);
 			}
@@ -207,7 +235,7 @@ function RiskScoreSlider() {
 	const slideChangeHandler = (value) => {
 		setFetching(true);
 		setScoreData(null);
-		setFetchingError(false);
+		setFetchingError(null);
 		setScore(parseInt(value, 10));
 	};
 
@@ -235,7 +263,7 @@ function RiskScoreSlider() {
 			<RiskDetails aria-live="polite">
 				{fetching && !scoreData && !fetchingError && (
 					<LoaderWrapper>
-						<Loader />
+						<Loader data-is_loader="true" />
 						<p>Calibrating portfolio...</p>
 					</LoaderWrapper>
 				)}
@@ -313,7 +341,15 @@ function RiskScoreSlider() {
 						</div>
 					</div>
 				)}
-				{!fetching && !scoreData && fetchingError && <Loader />}
+				{!fetching && !scoreData && fetchingError && (
+					<LoaderWrapper>
+						<NoData />
+						<div>
+							{fetchingError.statusCode && <span>{fetchingError.statusCode}</span>}
+							<p>Something went wrong, adjust the slider to try again.</p>
+						</div>
+					</LoaderWrapper>
+				)}
 			</RiskDetails>
 		</div>
 	);

@@ -1,0 +1,25 @@
+{
+	"name": "afroinvest",
+	"version": "0.1.0",
+	"private": "true",
+	"main": "server/index.js",
+	"type": "module",
+	"scripts": {
+		"prestart": "cd ./client/ && npm i && npm run build && cd ../server && npm i",
+		"start": "cd server && npm run start"
+	},
+	"devDependencies": {
+		"prettier": "^3.2.4",
+		"concurrently": "^8.2.2"
+	},
+	"prettier": {
+		"singleQuote": true,
+		"trailingComma": "none",
+		"printWidth": 100,
+		"tabWidth": 2,
+		"useTabs": true
+	},
+	"engines": {
+		"node": "^18.0.0"
+	}
+}

@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development nodemon index.js",
+		"prestart": "rm -rf ./dist/ && mv ../client/dist/ ./ && cd ..",
 		"start": "cross-env NODE_ENV=production node index.js",
 		"test": "cross-env NODE_ENV=test jest --verbose --runInBand"
 	},
@@ -18,17 +19,6 @@
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3",
-		"nodemon": "^3.0.3",
-		"prettier": "^3.2.2"
-	},
-	"prettier": {
-		"singleQuote": true,
-		"trailingComma": "none",
-		"printWidth": 100,
-		"tabWidth": 2,
-		"useTabs": true
-	},
-	"engines": {
-		"node": "^18.0.0"
+		"nodemon": "^3.0.3"
 	}
 }
