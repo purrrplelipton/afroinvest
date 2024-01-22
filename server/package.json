@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon index.js",
+		"prestart": "cd ../client/ && npm i && npm run build && rm -rf ../server/dist/ && mv ./dist/ ../server/",
 		"start": "node index.js"
 	},
 	"dependencies": {
