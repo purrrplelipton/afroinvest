@@ -3,8 +3,9 @@ export async function GetRiskData(score) {
 		const response = await fetch(`api/${score}`, {
 			method: 'GET',
 			headers: {
-				'Content-Type': 'application/json'
-			}
+				'Content-Type': 'application/json',
+			},
+			mode: 'cors'
 		});
 
 		if (!response.ok) {
