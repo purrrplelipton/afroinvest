@@ -1,0 +1,46 @@
+{
+	"name": "@afroinvest/client",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@svgr/rollup": "^8.1.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"styled-components": "^6.1.8",
+		"uuid": "^9.0.1"
+	},
+	"devDependencies": {
+		"@babel/eslint-parser": "^7.23.3",
+		"@vitejs/plugin-react-swc": "^3.5.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-react": "^7.33.2",
+		"prettier": "^3.2.2",
+		"vite": "^5.0.11"
+	},
+	"eslintConfig": {
+		"root": true,
+		"env": {
+			"node": true
+		},
+		"extends": [
+			"react-app",
+			"eslint:recommended"
+		],
+		"parserOptions": {
+			"parser": "@babel/eslint-parser"
+		}
+	},
+	"prettier": {
+		"singleQuote": true,
+		"trailingComma": "none",
+		"printWidth": 100,
+		"tabWidth": 2,
+		"useTabs": true
+	}
+}

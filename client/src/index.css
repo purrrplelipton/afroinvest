@@ -1,0 +1,64 @@
+:root {
+	--pry: hsl(0, 0%, 99%);
+	--sec: hsl(208, 100%, 22%);
+	min-height: 100%;
+	font-family: 'League Spartan', sans-serif;
+	font-display: swap;
+	font-weight: 600;
+	line-height: 1.5;
+	scroll-behavior: smooth;
+	color: #0f0f0f;
+	background-color: var(--pry);
+	background-image: url(/illustration.svg);
+	background-repeat: no-repeat;
+	background-size: 250%;
+	background-position-x: 93.75%;
+	background-position-y: 48px;
+	scrollbar-gutter: stable;
+	scroll-padding: 5em 0 0;
+}
+
+@media only screen and (min-width: 625px) {
+	:root {
+		background-size: 150%;
+		background-position-x: 100%;
+	}
+}
+
+@media only screen and (min-width: 1024px) {
+	:root {
+		font-size: 125%;
+		background-size: contain;
+		background-position: 100% 64px;
+	}
+}
+
+@media only screen and (max-width: 1023px) {
+	:root[data-menuVisible='true'] {
+		pointer-events: none;
+		height: 100vh;
+		overflow: hidden;
+	}
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border-width: 0;
+	border-style: solid;
+	border-color: transparent;
+	outline-width: 2px;
+	outline-style: solid;
+	outline-color: transparent;
+	outline-offset: 2px;
+	font: inherit;
+	color: inherit;
+	max-width: 100%;
+	background-color: transparent;
+	vertical-align: middle;
+}
+
+svg {
+	pointer-events: none;
+}
