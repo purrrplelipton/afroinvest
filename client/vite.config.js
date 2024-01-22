@@ -14,9 +14,8 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: import.meta.env.API,
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/api/, '')
+				target: 'https://afroinvest.onrender.com/',
+				changeOrigin: true
 			}
 		}
 	}
