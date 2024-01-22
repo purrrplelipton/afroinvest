@@ -47,6 +47,7 @@ const AccordionSection = styled.div`
 
 			&::before {
 				position: absolute;
+				z-index: -1;
 				inset: 50% auto auto 50%;
 				width: 112.5%;
 				height: 112.5%;
