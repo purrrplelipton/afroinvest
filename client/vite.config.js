@@ -16,7 +16,6 @@ export default defineConfig({
 			'/api': {
 				target: 'https://afroinvest.onrender.com/',
 				changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
 			}
 		}
 	}
