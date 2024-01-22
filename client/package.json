@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "rm -r dist && npm i && vite build",
+		"build": "rm -rf dist && npm i && vite build",
 		"preview": "vite preview"
 	},
 	"dependencies": {
