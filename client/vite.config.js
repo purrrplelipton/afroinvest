@@ -10,13 +10,5 @@ export default defineConfig({
 		alias: {
 			'@app': resolve(__dirname, './src/')
 		}
-	},
-	server: {
-		proxy: {
-			'/api': {
-				target: 'https://afroinvest.onrender.com/',
-				changeOrigin: true,
-			}
-		}
 	}
 });

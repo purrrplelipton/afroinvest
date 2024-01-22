@@ -1,6 +1,6 @@
 export async function GetRiskData(score) {
 	try {
-		const response = await fetch(`api/${score}`, {
+		const response = await fetch(`https://afroinvest.onrender.com/api/${score}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
