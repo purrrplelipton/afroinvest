@@ -3,18 +3,18 @@ import RiskModel from "../models/index.js"
 
 const $ = Router()
 
-$.get("/:score", async ({ params }, { status, json }) => {
+$.get("/:score", async ({ params }, rs) => {
 	try {
 		const data = await RiskModel.findOne({ score: parseInt(params.score, 10) })
 
 		if (!data) {
-			return status(404).json({ error: "Data not found" })
+			return rs.status(404).json({ error: "Data not found" })
 		}
 
-		json(data)
+		rs.json(data)
 	} catch ({ message }) {
 		console.error({ message })
-		status(500).json({ error: "Internal Server Error" })
+		rs.status(500).json({ error: "Internal Server Error" })
 	}
 })
 

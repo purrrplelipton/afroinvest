@@ -13,7 +13,7 @@ export default defineConfig({
 	},
 	server: {
 		proxy: {
-			"/": {
+			"/gwy": {
 				target: "http://localhost:3000",
 				changeOrigin: true,
 			},

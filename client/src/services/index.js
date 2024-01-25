@@ -1,6 +1,6 @@
 export async function GetRiskData(score) {
 	try {
-		const response = await fetch(`/api/${score}`, {
+		const response = await fetch(`gwy/${score}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
@@ -16,7 +16,7 @@ export async function GetRiskData(score) {
 
 		return { data }
 	} catch (error) {
-		console.error("Error fetching data:", error)
+		console.error("Error fetching data:", error.message)
 		throw error
 	}
 }
