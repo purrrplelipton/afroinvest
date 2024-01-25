@@ -1,8 +1,8 @@
-import { ReactComponent as Loader } from '@app/assets/loader.svg';
-import { ReactComponent as NoData } from '@app/assets/no-data.svg';
-import { GetRiskData } from '@app/services';
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import { Error } from "@app/assets/illustrations"
+import { ReactComponent as Loader } from "@app/assets/loader.svg"
+import { GetRiskData } from "@app/services"
+import React from "react"
+import styled, { keyframes } from "styled-components"
 
 const SliderWrapper = styled.div`
 	color: #fff;
@@ -80,7 +80,7 @@ const SliderWrapper = styled.div`
 			}
 		}
 	}
-`;
+`
 
 const RiskDetails = styled.div`
 	margin: 20px 0 6em;
@@ -104,7 +104,7 @@ const RiskDetails = styled.div`
 			position: relative;
 
 			&:not(:last-child):after {
-				content: '';
+				content: "";
 				position: absolute;
 				inset: calc(100% - 1px) 0 -1px 0;
 				background-color: hsl(0, 0%, 95%);
@@ -132,7 +132,7 @@ const RiskDetails = styled.div`
 					}
 
 					&::before {
-						content: '';
+						content: "";
 						position: absolute;
 						inset: 0;
 						background-color: var(--sec);
@@ -152,7 +152,7 @@ const RiskDetails = styled.div`
 			}
 		}
 	}
-`;
+`
 
 const rotate = keyframes`
   from {
@@ -160,7 +160,7 @@ const rotate = keyframes`
   } to {
     transform: rotate(1turn);
   }
-`;
+`
 
 const LoaderWrapper = styled.div`
 	font-weight: lighter;
@@ -174,7 +174,7 @@ const LoaderWrapper = styled.div`
 	align-items: center;
 	justify-content: center;
 
-	svg[data-is_loader='true'] {
+	svg[data-is_loader="true"] {
 		animation: ${rotate} 0.875s linear infinite;
 	}
 
@@ -206,41 +206,41 @@ const LoaderWrapper = styled.div`
 			}
 		}
 	}
-`;
+`
 
 function RiskScoreSlider() {
-	const [score, setScore] = React.useState(6);
-	const [fetching, setFetching] = React.useState(false);
-	const [scoreData, setScoreData] = React.useState(null);
-	const [fetchingError, setFetchingError] = React.useState(null);
+	const [score, setScore] = React.useState(6)
+	const [fetching, setFetching] = React.useState(false)
+	const [scoreData, setScoreData] = React.useState(null)
+	const [fetchingError, setFetchingError] = React.useState(null)
 
 	React.useEffect(() => {
 		const timer = setTimeout(async () => {
 			try {
-				setFetching(true);
-				const { data } = await GetRiskData(score);
-				setScoreData(data);
+				setFetching(true)
+				const { data } = await GetRiskData(score)
+				setScoreData(data)
 			} catch (error) {
-				console.error(error.message);
-				console.log(error);
-				setFetchingError(error);
+				console.error(error.message)
+				console.log(error)
+				setFetchingError(error)
 			} finally {
-				setFetching(false);
+				setFetching(false)
 			}
-		}, 1000);
+		}, 1000)
 
-		return () => clearTimeout(timer);
-	}, [score]);
+		return () => clearTimeout(timer)
+	}, [score])
 
 	const slideChangeHandler = (value) => {
-		setFetching(true);
-		setScoreData(null);
-		setFetchingError(null);
-		setScore(parseInt(value, 10));
-	};
+		setFetching(true)
+		setScoreData(null)
+		setFetchingError(null)
+		setScore(parseInt(value, 10))
+	}
 
 	return (
-		<div style={{ alignSelf: 'start' }}>
+		<div style={{ alignSelf: "start" }}>
 			<SliderWrapper>
 				<div>
 					<p aria-live="polite" aria-atomic="true">
@@ -271,79 +271,49 @@ function RiskScoreSlider() {
 					<div className="score-data">
 						<div>
 							<span>Nigerian Stocks:</span>
-							<i
-								data-percentage={scoreData.stocks.local + '%'}
-								style={{ width: `${scoreData.stocks.local}%` }}
-							/>
+							<i data-percentage={scoreData.stocks.local + "%"} style={{ width: `${scoreData.stocks.local}%` }} />
 						</div>
 						<div>
 							<span>Foreign Stocks:</span>
-							<i
-								data-percentage={scoreData.stocks.foreign + '%'}
-								style={{ width: `${scoreData.stocks.foreign}%` }}
-							/>
+							<i data-percentage={scoreData.stocks.foreign + "%"} style={{ width: `${scoreData.stocks.foreign}%` }} />
 						</div>
 						<div>
 							<span>Tech Stocks:</span>
-							<i
-								data-percentage={scoreData.stocks.tech + '%'}
-								style={{ width: `${scoreData.stocks.tech}%` }}
-							/>
+							<i data-percentage={scoreData.stocks.tech + "%"} style={{ width: `${scoreData.stocks.tech}%` }} />
 						</div>
 						<div>
 							<span>Emerging Stocks:</span>
-							<i
-								data-percentage={scoreData.stocks.emerging + '%'}
-								style={{ width: `${scoreData.stocks.emerging}%` }}
-							/>
+							<i data-percentage={scoreData.stocks.emerging + "%"} style={{ width: `${scoreData.stocks.emerging}%` }} />
 						</div>
 						<div>
 							<span>Nigerian Bonds:</span>
-							<i
-								data-percentage={scoreData.bonds.local + '%'}
-								style={{ width: `${scoreData.bonds.local}%` }}
-							/>
+							<i data-percentage={scoreData.bonds.local + "%"} style={{ width: `${scoreData.bonds.local}%` }} />
 						</div>
 						<div>
 							<span>Foreign Bonds:</span>
-							<i
-								data-percentage={scoreData.bonds.foreign + '%'}
-								style={{ width: `${scoreData.bonds.foreign}%` }}
-							/>
+							<i data-percentage={scoreData.bonds.foreign + "%"} style={{ width: `${scoreData.bonds.foreign}%` }} />
 						</div>
 						<div>
 							<span>Commodities</span>
-							<i
-								data-percentage={scoreData.commodities + '%'}
-								style={{ width: `${scoreData.commodities}%` }}
-							/>
+							<i data-percentage={scoreData.commodities + "%"} style={{ width: `${scoreData.commodities}%` }} />
 						</div>
 						<div>
 							<span>Real Estate:</span>
-							<i
-								data-percentage={scoreData['real estate'] + '%'}
-								style={{ width: `${scoreData['real estate']}%` }}
-							/>
+							<i data-percentage={scoreData["real estate"] + "%"} style={{ width: `${scoreData["real estate"]}%` }} />
 						</div>
 						<div>
 							<span>T-Bills:</span>
-							<i
-								data-percentage={scoreData['t-bills'] + '%'}
-								style={{ width: `${scoreData['t-bills']}%` }}
-							/>
+							<i data-percentage={scoreData["t-bills"] + "%"} style={{ width: `${scoreData["t-bills"]}%` }} />
 						</div>
 						<div>
 							<span>Alternative:</span>
-							<i
-								data-percentage={scoreData.alternative + '%'}
-								style={{ width: `${scoreData.alternative}%` }}
-							/>
+							<i data-percentage={scoreData.alternative + "%"} style={{ width: `${scoreData.alternative}%` }} />
 						</div>
 					</div>
 				)}
 				{!fetching && !scoreData && fetchingError && (
 					<LoaderWrapper>
-						<NoData />
+						<Error />
 						<div>
 							{fetchingError.statusCode && <span>{fetchingError.statusCode}</span>}
 							<p>Something went wrong, adjust the slider to try again.</p>
@@ -352,7 +322,7 @@ function RiskScoreSlider() {
 				)}
 			</RiskDetails>
 		</div>
-	);
+	)
 }
 
-export default RiskScoreSlider;
+export default RiskScoreSlider

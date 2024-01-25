@@ -1,7 +1,7 @@
-import { Wrapper } from '@app/components/common/wrapper';
-import React from 'react';
-import styled from 'styled-components';
-import RiskScoreSlider from './score-slider';
+import { Wrapper } from "@app/components/common/wrapper"
+import styled from "styled-components"
+import RiskScoreSlider from "./score-slider"
+import React from "react"
 
 const StyledWrapper = styled(Wrapper)`
 	@media only screen and (min-width: 768px) {
@@ -14,7 +14,7 @@ const StyledWrapper = styled(Wrapper)`
 	@media only screen and (min-width: 1024px) {
 		gap: 48px;
 	}
-`;
+`
 
 const QuickDesc = styled.div`
 	text-align: center;
@@ -47,7 +47,7 @@ const QuickDesc = styled.div`
 			}
 		}
 	}
-`;
+`
 
 function GetStarted() {
 	return (
@@ -56,15 +56,15 @@ function GetStarted() {
 				<QuickDesc>
 					<h2>Smart investing tailored just for you</h2>
 					<p>
-						Forget investment stress. Answer a few questions, and AfroInvest builds your
-						personalized portfolio of top Nigerian & global index funds. Grow your wealth steadily,
-						hands-free, with smart tech doing the work. <span>#AfroInvest</span>
+						Forget investment stress. Answer a few questions, and AfroInvest builds your personalized portfolio of top
+						Nigerian & global index funds. Grow your wealth steadily, hands-free, with smart tech doing the work.{" "}
+						<span>#AfroInvest</span>
 					</p>
 				</QuickDesc>
 				<RiskScoreSlider />
 			</StyledWrapper>
 		</section>
-	);
+	)
 }
 
-export default GetStarted;
+export default GetStarted

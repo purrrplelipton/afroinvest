@@ -1,14 +1,18 @@
 {
 	"name": "@afroinvest/client",
 	"private": true,
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
+		"lint": "npx eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
 		"build": "rm -rf dist && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"prestart": "rm -rf ../server/dist",
+		"start": "yarn build && mv dist ../server"
 	},
 	"dependencies": {
+		"@afroinvest/server": "1.0.0",
 		"@svgr/rollup": "^8.1.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -16,23 +20,20 @@
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
-		"@babel/eslint-parser": "^7.23.3",
 		"@vitejs/plugin-react-swc": "^3.5.0",
-		"eslint": "^8.56.0",
 		"eslint-plugin-react": "^7.33.2",
-		"vite": "^5.0.11"
+		"prop-types": "15.8.1",
+		"vite": "^5.0.12"
 	},
 	"eslintConfig": {
-		"root": true,
-		"env": {
-			"node": true
-		},
 		"extends": [
-			"react-app",
-			"eslint:recommended"
+			"../.eslintrc.json",
+			"plugin:react/recommended"
 		],
-		"parserOptions": {
-			"parser": "@babel/eslint-parser"
+		"settings": {
+			"react": {
+				"version": "detect"
+			}
 		}
 	}
 }

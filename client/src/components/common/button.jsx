@@ -1,8 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react"
+import styled from "styled-components"
 
-export const Button = styled.button.attrs(({ $type = 'button' }) => ({
-	type: ['button', 'submit', 'reset'].includes($type) ? $type : 'button'
+export const Button = styled.button.attrs(({ $type = "button" }) => ({
+	type: ["button", "submit", "reset"].includes($type) ? $type : "button",
 }))`
 	line-height: 1.125;
 	font-weight: lighter;
@@ -11,9 +11,9 @@ export const Button = styled.button.attrs(({ $type = 'button' }) => ({
 		border-radius: 999px;
 		outline-color: currentColor;
 	}
-`;
+`
 
-const GetStartedButton = styled.a.attrs(({ $href = '#get_started' }) => ({ href: $href }))`
+const GetStartedButton = styled.a.attrs(({ $href = "#get_started" }) => ({ href: $href }))`
 	display: inline-block;
 	text-decoration: none;
 	line-height: 1.125;
@@ -30,12 +30,14 @@ const GetStartedButton = styled.a.attrs(({ $href = '#get_started' }) => ({ href:
 		outline-offset: -3px;
 		outline-color: currentColor;
 	}
-`;
+`
 
 export const GetStarted = React.forwardRef(($props, $ref) => {
 	return (
 		<GetStartedButton {...$props} ref={$ref}>
 			<span>Get started</span>
 		</GetStartedButton>
-	);
-});
+	)
+})
+
+GetStarted.displayName = "GetStarted"

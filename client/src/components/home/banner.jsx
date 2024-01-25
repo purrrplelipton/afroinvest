@@ -1,7 +1,7 @@
-import { GetStarted } from '@app/components/common/button';
-import { Wrapper } from '@app/components/common/wrapper';
-import React from 'react';
-import styled from 'styled-components';
+import { GetStarted } from "@app/components/common/button"
+import { Wrapper } from "@app/components/common/wrapper"
+import styled from "styled-components"
+import React from "react"
 
 const Landing = styled(Wrapper)`
 	height: 93.75vh;
@@ -23,13 +23,13 @@ const Landing = styled(Wrapper)`
 			margin: 4em 0 0;
 		}
 	}
-`;
+`
 
 const MainHeading = styled.h1`
 	font-size: 2.25em;
 	line-height: 1.125;
 	margin-bottom: 0.25em;
-`;
+`
 
 const SubHeading = styled.p`
 	font-weight: lighter;
@@ -38,7 +38,7 @@ const SubHeading = styled.p`
 	@media only screen and (min-width: 1024px) {
 		max-width: 65%;
 	}
-`;
+`
 
 function Banner() {
 	return (
@@ -46,14 +46,12 @@ function Banner() {
 			<Landing>
 				<div>
 					<MainHeading>A smarter way to invest and save for the future</MainHeading>
-					<SubHeading>
-						Make your money work for you by investing in personalized long term portfolios
-					</SubHeading>
+					<SubHeading>Make your money work for you by investing in personalized long term portfolios</SubHeading>
 					<GetStarted />
 				</div>
 			</Landing>
 		</section>
-	);
+	)
 }
 
-export default Banner;
+export default Banner

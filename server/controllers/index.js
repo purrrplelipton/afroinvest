@@ -1,21 +1,21 @@
-import { Router } from 'express';
-import RiskModel from '../models/index.js';
+import { Router } from "express"
+import RiskModel from "../models/index.js"
 
-const $ = Router();
+const $ = Router()
 
-$.get('/:score', async ({ params }, res) => {
+$.get("/:score", async ({ params }, { status, json }) => {
 	try {
-		const data = await RiskModel.findOne({ score: parseInt(params.score, 10) });
+		const data = await RiskModel.findOne({ score: parseInt(params.score, 10) })
 
 		if (!data) {
-			return res.status(404).json({ error: 'Data not found' });
+			return status(404).json({ error: "Data not found" })
 		}
 
-		res.json(data);
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ error: 'Internal Server Error' });
+		json(data)
+	} catch ({ message }) {
+		console.error({ message })
+		status(500).json({ error: "Internal Server Error" })
 	}
-});
+})
 
-export default $;
+export default $

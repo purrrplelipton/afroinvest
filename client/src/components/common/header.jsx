@@ -1,16 +1,15 @@
-import { ReactComponent as NavbarCollapse } from '@app/assets/navbar-collapse.svg';
-import { ReactComponent as NavbarExpand } from '@app/assets/navbar-expand.svg';
-import { useMenu } from '@app/context/menu-context';
-import React from 'react';
-import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
-import { Button, GetStarted } from './button';
-import Logo from './logo';
-import { Wrapper } from './wrapper';
+import { NavbarCollapse, NavbarExpand } from "@app/assets/icons"
+import { useMenu } from "@app/context/menu-context"
+import React from "react"
+import styled from "styled-components"
+import { v4 as uuidv4 } from "uuid"
+import { Button, GetStarted } from "./button"
+import Logo from "./logo"
+import { Wrapper } from "./wrapper"
 
 const HeaderContainer = styled.header.attrs(({ $menuVisible = false, $isTop = false }) => ({
 	$menuVisible,
-	$isTop
+	$isTop,
 }))`
 	transition:
 		background-color 0.2s ease-in-out,
@@ -19,12 +18,12 @@ const HeaderContainer = styled.header.attrs(({ $menuVisible = false, $isTop = fa
 	z-index: 99;
 	inset: 0 0 auto 0;
 	background-color: ${({ $menuVisible, $isTop }) =>
-		(!$menuVisible && !$isTop) || $menuVisible ? 'var(--pry)' : '#0000'};
+		(!$menuVisible && !$isTop) || $menuVisible ? "var(--pry)" : "transparent"};
 	box-shadow: ${({ $menuVisible, $isTop }) =>
-		!$menuVisible && !$isTop ? '0 4px 12px hsla(0, 0%, 0%, 0.03)' : '0 4px 12px #0000'};
+		!$menuVisible && !$isTop ? "0 4px 12px hsla(0, 0%, 0%, 0.03)" : "0 4px 12px #0000"};
 	background-image: linear-gradient(to top, transparent, var(--pry));
 	background-repeat: no-repeat;
-`;
+`
 
 const ContentWrapper = styled(Wrapper)`
 	max-width: 1366px;
@@ -32,7 +31,7 @@ const ContentWrapper = styled(Wrapper)`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-`;
+`
 
 const MenuToggle = styled(Button)`
 	pointer-events: auto;
@@ -40,11 +39,11 @@ const MenuToggle = styled(Button)`
 	@media only screen and (min-width: 1024px) {
 		display: none;
 	}
-`;
+`
 
 const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
-	'aria-label': 'main navigation',
-	$menuVisible
+	"aria-label": "main navigation",
+	$menuVisible,
 }))`
 	position: absolute;
 	z-index: 88;
@@ -54,7 +53,7 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 	padding: 12px 0;
 	box-shadow: 0 12px 12px hsla(0, 0%, 0%, 0.03);
 	pointer-events: auto;
-	display: ${(props) => (props.$menuVisible ? 'initial' : 'none')};
+	display: ${(props) => (props.$menuVisible ? "initial" : "none")};
 
 	@media only screen and (min-width: 1024px) {
 		position: static;
@@ -108,7 +107,7 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 					}
 
 					&::after {
-						content: '';
+						content: "";
 						position: absolute;
 						inset: calc(100% - 1px) 0 -1px 0;
 						background-color: hsla(0, 0%, 0%, 0.025);
@@ -120,7 +119,7 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 				}
 
 				&:hover::before {
-					content: '';
+					content: "";
 				}
 
 				&:focus {
@@ -135,29 +134,29 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 			}
 		}
 	}
-`;
+`
 
 const routes = [
-	{ path: 'home', label: 'Home' },
-	{ path: 'how_it_works', label: 'How it works' },
-	{ path: 'why_us', label: 'Why us' },
-	{ path: 'faqs', label: 'FAQs' }
-].map((o) => ({ ...o, id: uuidv4() }));
+	{ path: "home", label: "Home" },
+	{ path: "how_it_works", label: "How it works" },
+	{ path: "why_us", label: "Why us" },
+	{ path: "faqs", label: "FAQs" },
+].map((o) => ({ ...o, id: uuidv4() }))
 
 function Header() {
-	const { menuVisible, setMenuVisible } = useMenu();
-	const menuToggleRef = React.useRef();
-	const navRef = React.useRef();
+	const { menuVisible, setMenuVisible } = useMenu()
+	const menuToggleRef = React.useRef()
+	const navRef = React.useRef()
 
-	const [isTop, setIsTop] = React.useState(true);
+	const [isTop, setIsTop] = React.useState(true)
 
 	React.useEffect(() => {
-		const handleScroll = () => setIsTop(window.scrollY < 64);
+		const handleScroll = () => setIsTop(window.scrollY < 64)
 
-		window.addEventListener('scroll', handleScroll);
+		window.addEventListener("scroll", handleScroll)
 
-		return () => window.removeEventListener('scroll', handleScroll);
-	}, []);
+		return () => window.removeEventListener("scroll", handleScroll)
+	}, [])
 
 	React.useEffect(() => {
 		function clickOut(ev) {
@@ -167,16 +166,16 @@ function Header() {
 				navRef.current &&
 				!navRef.current.contains(ev.target)
 			) {
-				setMenuVisible(false);
+				setMenuVisible(false)
 			}
 		}
 
-		document.addEventListener('click', clickOut);
+		document.addEventListener("click", clickOut)
 
 		return () => {
-			document.removeEventListener('click', clickOut);
-		};
-	}, [setMenuVisible, menuToggleRef, navRef]);
+			document.removeEventListener("click", clickOut)
+		}
+	}, [setMenuVisible, menuToggleRef, navRef])
 
 	return (
 		<HeaderContainer $menuVisible={menuVisible} $isTop={isTop}>
@@ -185,7 +184,7 @@ function Header() {
 				<MenuToggle
 					ref={menuToggleRef}
 					onClick={() => setMenuVisible((prv) => !prv)}
-					aria-label={`${menuVisible ? 'hide' : 'show'} menu`}
+					aria-label={`${menuVisible ? "hide" : "show"} menu`}
 					aria-haspopup="true"
 					aria-expanded={menuVisible}
 				>
@@ -204,7 +203,7 @@ function Header() {
 				</Nav>
 			</ContentWrapper>
 		</HeaderContainer>
-	);
+	)
 }
 
-export default Header;
+export default Header

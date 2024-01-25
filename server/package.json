@@ -1,15 +1,18 @@
 {
 	"name": "@afroinvest/server",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"private": "true",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"dev": "nodemon index.js",
-		"start": "node index.js"
+		"dev": "cross-env NODE_ENV=development && nodemon index.js",
+		"lint": "npx eslint .",
+		"start": "cross-env NODE_ENV=production && node index.js"
 	},
 	"dependencies": {
+		"@afroinvest/client": "1.0.0",
 		"cors": "^2.8.5",
+		"cross-env": "^7.0.3",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
 		"mongoose": "^8.1.0",
@@ -18,7 +21,9 @@
 	"devDependencies": {
 		"nodemon": "^3.0.3"
 	},
-	"engines": {
-		"node": "^18.0.0"
+	"eslintConfig": {
+		"extends": [
+			"../.eslintrc.json"
+		]
 	}
 }

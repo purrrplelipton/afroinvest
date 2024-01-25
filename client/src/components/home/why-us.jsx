@@ -1,9 +1,7 @@
-import { ReactComponent as InvestingBro } from '@app/assets/investing-bro.svg';
-import { ReactComponent as SavingsBro } from '@app/assets/savings-bro.svg';
-import { ReactComponent as SearchEnginesBro } from '@app/assets/search-engines-bro.svg';
-import { Wrapper } from '@app/components/common/wrapper';
-import React from 'react';
-import styled from 'styled-components';
+import { Investing, Optimization, Saving } from "@app/assets/illustrations"
+import { Wrapper } from "@app/components/common/wrapper"
+import styled from "styled-components"
+import React from "react"
 
 const StyledWrapper = styled(Wrapper)`
 	& > div {
@@ -13,7 +11,7 @@ const StyledWrapper = styled(Wrapper)`
 			margin: 0.375em 0 0.625em;
 		}
 	}
-`;
+`
 
 const PointsDisplay = styled.div`
 	& > div {
@@ -48,7 +46,7 @@ const PointsDisplay = styled.div`
 			font-weight: lighter;
 		}
 	}
-`;
+`
 
 function WhyUs() {
 	return (
@@ -58,31 +56,29 @@ function WhyUs() {
 					<h2>Why choose AfroInvest</h2>
 					<PointsDisplay>
 						<div>
-							<InvestingBro />
+							<Investing />
 							<p>
-								AfroInvest gives you access to a whole new world of investment with a simplified
-								5-minute experience.
+								AfroInvest gives you access to a whole new world of investment with a simplified 5-minute experience.
 							</p>
 						</div>
 						<div>
-							<SavingsBro />
+							<Saving />
 							<p>
-								AfroInvest fees are a lot lower than regular investment advisory fees as the whole
-								process is automated.
+								AfroInvest fees are a lot lower than regular investment advisory fees as the whole process is automated.
 							</p>
 						</div>
 						<div>
-							<SearchEnginesBro />
+							<Optimization />
 							<p>
-								With globally low interest rates, investing your money in long term portfolios has
-								never been this attractive.
+								With globally low interest rates, investing your money in long term portfolios has never been this
+								attractive.
 							</p>
 						</div>
 					</PointsDisplay>
 				</div>
 			</StyledWrapper>
 		</section>
-	);
+	)
 }
 
-export default WhyUs;
+export default WhyUs

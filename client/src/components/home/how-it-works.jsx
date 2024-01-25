@@ -1,8 +1,8 @@
-import { ReactComponent as Underline } from '@app/assets/underline.svg';
-import { Wrapper } from '@app/components/common/wrapper';
-import React from 'react';
-import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
+import { ReactComponent as Underline } from "@app/assets/underline.svg"
+import { Wrapper } from "@app/components/common/wrapper"
+import React from "react"
+import styled from "styled-components"
+import { v4 as uuidv4 } from "uuid"
 
 const SectionDesc = styled.div`
 	text-align: center;
@@ -21,7 +21,7 @@ const SectionDesc = styled.div`
 		font-weight: lighter;
 		margin: 0.625em 0 1.375em;
 	}
-`;
+`
 
 const TabSelectorDiv = styled.div`
 	font-size: 1.125em;
@@ -49,7 +49,7 @@ const TabSelectorDiv = styled.div`
 		}
 
 		&:focus-within::before {
-			content: '';
+			content: "";
 		}
 
 		input {
@@ -69,7 +69,7 @@ const TabSelectorDiv = styled.div`
 			position: relative;
 
 			&::after {
-				content: '';
+				content: "";
 				position: absolute;
 				inset: calc(100% - 4px) 0 3px 0;
 				background-color: currentColor;
@@ -83,7 +83,7 @@ const TabSelectorDiv = styled.div`
 			margin: 0.25em 0.4em;
 		}
 	}
-`;
+`
 
 const Tab = styled.div`
 	padding: 12px;
@@ -115,7 +115,7 @@ const Tab = styled.div`
 			border-radius: 999px;
 
 			&::before {
-				content: '';
+				content: "";
 				position: absolute;
 				inset: 0;
 				background-color: var(--sec);
@@ -155,28 +155,28 @@ const Tab = styled.div`
 			transform: translateY(-50%);
 		}
 	}
-`;
+`
 
 const tabs = {
 	[uuidv4()]: {
-		title: 'Tell us about yourself',
+		title: "Tell us about yourself",
 		content:
-			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi itaque ab vel debitis nisi error culpa consectetur tenetur fuga maiores!'
+			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi itaque ab vel debitis nisi error culpa consectetur tenetur fuga maiores!",
 	},
 	[uuidv4()]: {
-		title: 'Open your account',
+		title: "Open your account",
 		content:
-			'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae cum animi dolorem sed nulla alias mollitia aperiam. In, veniam laudantium.'
+			"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae cum animi dolorem sed nulla alias mollitia aperiam. In, veniam laudantium.",
 	},
 	[uuidv4()]: {
-		title: 'Sit back and relax',
+		title: "Sit back and relax",
 		content:
-			'Fugiat magni est ea voluptatum itaque hic eaque id velit laboriosam sunt tempora, nulla tenetur aperiam placeat! Quod, voluptate placeat.'
-	}
-};
+			"Fugiat magni est ea voluptatum itaque hic eaque id velit laboriosam sunt tempora, nulla tenetur aperiam placeat! Quod, voluptate placeat.",
+	},
+}
 
 function HowItWorks() {
-	const [selectedTab, setSelectedTab] = React.useState(Object.keys(tabs)[0]);
+	const [selectedTab, setSelectedTab] = React.useState(Object.keys(tabs)[0])
 
 	return (
 		<section id="how_it_works">
@@ -184,8 +184,8 @@ function HowItWorks() {
 				<SectionDesc>
 					<h2>How It Works</h2>
 					<p>
-						AfroInvest - Ai, takes away the hassle of managing your investments. Focus on what
-						really matters and let your money work for you.
+						AfroInvest - Ai, takes away the hassle of managing your investments. Focus on what really matters and let
+						your money work for you.
 					</p>
 				</SectionDesc>
 				<div>
@@ -221,7 +221,7 @@ function HowItWorks() {
 				</div>
 			</Wrapper>
 		</section>
-	);
+	)
 }
 
-export default HowItWorks;
+export default HowItWorks

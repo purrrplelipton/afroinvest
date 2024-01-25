@@ -1,7 +1,7 @@
-import { ReactComponent as ChevronDown } from '@app/assets/chevron-down.svg';
-import { Wrapper } from '@app/components/common/wrapper';
-import React from 'react';
-import styled from 'styled-components';
+import { ChevronDown } from "@app/assets/icons"
+import { Wrapper } from "@app/components/common/wrapper"
+import styled from "styled-components"
+import React from "react"
 
 const StyledWrapper = styled(Wrapper)`
 	padding-top: 4em;
@@ -11,7 +11,7 @@ const StyledWrapper = styled(Wrapper)`
 		font-size: 2em;
 		text-align: center;
 	}
-`;
+`
 
 const AccordionSection = styled.div`
 	display: grid;
@@ -34,7 +34,7 @@ const AccordionSection = styled.div`
 			margin-bottom: 0.875em;
 
 			&::before {
-				content: '';
+				content: "";
 			}
 		}
 
@@ -76,7 +76,7 @@ const AccordionSection = styled.div`
 				}
 
 				&:focus-within::before {
-					content: '';
+					content: "";
 				}
 
 				input {
@@ -121,7 +121,7 @@ const AccordionSection = styled.div`
 			}
 		}
 	}
-`;
+`
 
 function FAQs() {
 	return (
@@ -137,10 +137,9 @@ function FAQs() {
 						</label>
 						<div>
 							<p>
-								AfroInvest is a robo-advisor platform that utilizes advanced algorithms to create
-								and manage diversified investment portfolios for users. It assesses individual risk
-								tolerance, financial goals, and market conditions to provide personalized investment
-								strategies.
+								AfroInvest is a robo-advisor platform that utilizes advanced algorithms to create and manage diversified
+								investment portfolios for users. It assesses individual risk tolerance, financial goals, and market
+								conditions to provide personalized investment strategies.
 							</p>
 						</div>
 					</div>
@@ -152,9 +151,9 @@ function FAQs() {
 						</label>
 						<div>
 							<p>
-								AfroInvest offers a range of diversified portfolios, including conservative,
-								balanced, and growth-oriented options. Each portfolio is designed to align with
-								different risk tolerances and investment objectives.
+								AfroInvest offers a range of diversified portfolios, including conservative, balanced, and
+								growth-oriented options. Each portfolio is designed to align with different risk tolerances and
+								investment objectives.
 							</p>
 						</div>
 					</div>
@@ -166,9 +165,9 @@ function FAQs() {
 						</label>
 						<div>
 							<p>
-								AfroInvest monitors portfolios regularly and rebalances them when needed to maintain
-								the desired asset allocation. The frequency of rebalancing depends on market
-								conditions and changes in your personal circumstances.
+								AfroInvest monitors portfolios regularly and rebalances them when needed to maintain the desired asset
+								allocation. The frequency of rebalancing depends on market conditions and changes in your personal
+								circumstances.
 							</p>
 						</div>
 					</div>
@@ -180,9 +179,9 @@ function FAQs() {
 						</label>
 						<div>
 							<p>
-								Yes, AfroInvest is designed to be user-friendly and suitable for individuals at all
-								levels of investing experience. Our platform provides educational resources to help
-								beginners understand and navigate the world of investing.
+								Yes, AfroInvest is designed to be user-friendly and suitable for individuals at all levels of investing
+								experience. Our platform provides educational resources to help beginners understand and navigate the
+								world of investing.
 							</p>
 						</div>
 					</div>
@@ -194,32 +193,29 @@ function FAQs() {
 						</label>
 						<div>
 							<p>
-								While AfroInvest does not provide tax advice, we offer access to essential
-								investment-related documents, such as annual statements, which can be used for tax
-								reporting purposes.
+								While AfroInvest does not provide tax advice, we offer access to essential investment-related documents,
+								such as annual statements, which can be used for tax reporting purposes.
 							</p>
 						</div>
 					</div>
 					<div>
-						<h3>
-							How does AfroInvest take economic conditions into account when managing portfolios?
-						</h3>
+						<h3>How does AfroInvest take economic conditions into account when managing portfolios?</h3>
 						<label htmlFor="faq_6">
 							<input type="checkbox" id="faq_6" />
 							<ChevronDown />
 						</label>
 						<div>
 							<p>
-								AfroInvest's algorithm considers current economic conditions and market trends when
-								managing portfolios. This allows for dynamic adjustments to investment strategies,
-								aiming to optimize returns based on prevailing economic factors.
+								AfroInvest&apos;s algorithm considers current economic conditions and market trends when managing
+								portfolios. This allows for dynamic adjustments to investment strategies, aiming to optimize returns
+								based on prevailing economic factors.
 							</p>
 						</div>
 					</div>
 				</AccordionSection>
 			</StyledWrapper>
 		</section>
-	);
+	)
 }
 
-export default FAQs;
+export default FAQs
