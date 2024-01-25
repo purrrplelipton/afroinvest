@@ -15,7 +15,7 @@
 		"lint": "yarn lint:server && yarn lint:client",
 		"start:server": "yarn workspace @afroinvest/server start",
 		"start:client": "yarn workspace @afroinvest/client start",
-		"start": "concurrently --kill-others-on-fail \"yarn start:server\"  \"yarn start:client\""
+		"start": "yarn start:client && yarn start:server"
 	},
 	"dependencies": {
 		"concurrently": "^8.2.2"
