@@ -1,7 +1,7 @@
 import { Investing, Optimization, Saving } from "@app/assets/illustrations"
-import { Wrapper } from "@app/components/common/wrapper"
-import styled from "styled-components"
+import Wrapper from "@app/components/common/wrapper"
 import React from "react"
+import styled from "styled-components"
 
 const StyledWrapper = styled(Wrapper)`
 	& > div {

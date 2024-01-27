@@ -1,7 +1,7 @@
-import { Wrapper } from "@app/components/common/wrapper"
+import Wrapper from "@app/components/common/wrapper"
+import React from "react"
 import styled from "styled-components"
 import RiskScoreSlider from "./score-slider"
-import React from "react"
 
 const StyledWrapper = styled(Wrapper)`
 	@media only screen and (min-width: 768px) {

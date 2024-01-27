@@ -1,3 +1,6 @@
+export { ReactComponent as ArrowLeft } from "./arrow-left.svg"
 export { ReactComponent as ChevronDown } from "./chevron-down.svg"
+export { ReactComponent as EyeClosed } from "./eye-closed.svg"
+export { ReactComponent as Eye } from "./eye.svg"
 export { ReactComponent as NavbarCollapse } from "./navbar-collapse.svg"
 export { ReactComponent as NavbarExpand } from "./navbar-expand.svg"

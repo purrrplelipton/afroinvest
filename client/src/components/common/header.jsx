@@ -3,9 +3,9 @@ import { useMenu } from "@app/context/menu-context"
 import React from "react"
 import styled from "styled-components"
 import { v4 as uuidv4 } from "uuid"
-import { Button, GetStarted } from "./button"
+import { Btn, SignIn } from "./button"
 import Logo from "./logo"
-import { Wrapper } from "./wrapper"
+import Wrapper from "./wrapper"
 
 const HeaderContainer = styled.header.attrs(({ $menuVisible = false, $isTop = false }) => ({
 	$menuVisible,
@@ -33,7 +33,7 @@ const ContentWrapper = styled(Wrapper)`
 	justify-content: space-between;
 `
 
-const MenuToggle = styled(Button)`
+const MenuToggle = styled(Btn)`
 	pointer-events: auto;
 
 	@media only screen and (min-width: 1024px) {
@@ -76,7 +76,7 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 			align-items: center;
 			padding: 0;
 
-			button {
+			Btn {
 				margin-left: 2em;
 			}
 		}
@@ -84,7 +84,7 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 		* {
 			flex-shrink: 0;
 
-			&[href]:not(:last-child) {
+			&[href] {
 				line-height: 1.125;
 				text-decoration: none;
 				text-align: center;
@@ -96,25 +96,23 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 					padding: 0.375em 0.4em 0.25em;
 				}
 
-				&:not(:last-of-type) {
-					&::before {
-						position: absolute;
-						z-index: -1;
-						inset: 0;
-						background-color: var(--sec);
-						opacity: 3%;
-						border-radius: 8px;
-					}
+				&::before {
+					position: absolute;
+					z-index: -1;
+					inset: 0;
+					background-color: var(--sec);
+					opacity: 3%;
+					border-radius: 8px;
+				}
 
-					&::after {
-						content: "";
-						position: absolute;
-						inset: calc(100% - 1px) 0 -1px 0;
-						background-color: hsla(0, 0%, 0%, 0.025);
+				&::after {
+					content: "";
+					position: absolute;
+					inset: calc(100% - 1px) 0 -1px 0;
+					background-color: hsla(0, 0%, 0%, 0.025);
 
-						@media only screen and (min-width: 1024px) {
-							content: none;
-						}
+					@media only screen and (min-width: 1024px) {
+						content: none;
 					}
 				}
 
@@ -137,10 +135,10 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 `
 
 const routes = [
-	{ path: "home", label: "Home" },
-	{ path: "how_it_works", label: "How it works" },
-	{ path: "why_us", label: "Why us" },
-	{ path: "faqs", label: "FAQs" },
+	{ path: "#home", label: "Home" },
+	{ path: "#how_it_works", label: "How it works" },
+	{ path: "#why_us", label: "Why us" },
+	{ path: "#faqs", label: "FAQs" },
 ].map((o) => ({ ...o, id: uuidv4() }))
 
 function Header() {
@@ -188,17 +186,16 @@ function Header() {
 					aria-haspopup="true"
 					aria-expanded={menuVisible}
 				>
-					{menuVisible && <NavbarCollapse />}
-					{!menuVisible && <NavbarExpand />}
+					{menuVisible ? <NavbarCollapse /> : <NavbarExpand />}
 				</MenuToggle>
 				<Nav ref={navRef} $menuVisible={menuVisible}>
 					<div>
 						{routes.map((x) => (
-							<a key={x.id} href={`#${x.path}`} onClick={() => setMenuVisible(false)}>
+							<a key={x.id} href={x.path} onClick={() => setMenuVisible(false)}>
 								<span>{x.label}</span>
 							</a>
 						))}
-						<GetStarted />
+						<SignIn />
 					</div>
 				</Nav>
 			</ContentWrapper>

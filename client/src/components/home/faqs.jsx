@@ -1,7 +1,7 @@
 import { ChevronDown } from "@app/assets/icons"
-import { Wrapper } from "@app/components/common/wrapper"
-import styled from "styled-components"
+import Wrapper from "@app/components/common/wrapper"
 import React from "react"
+import styled from "styled-components"
 
 const StyledWrapper = styled(Wrapper)`
 	padding-top: 4em;

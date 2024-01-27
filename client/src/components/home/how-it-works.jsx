@@ -1,5 +1,5 @@
 import { ReactComponent as Underline } from "@app/assets/underline.svg"
-import { Wrapper } from "@app/components/common/wrapper"
+import Wrapper from "@app/components/common/wrapper"
 import React from "react"
 import styled from "styled-components"
 import { v4 as uuidv4 } from "uuid"

@@ -1,5 +1,12 @@
 import { Schema, model } from "mongoose"
 
+const UserSchema = new Schema({
+	email: { required: true, type: String, unique: true },
+	password: { required: true, type: String },
+})
+
+const UserModel = model("User", UserSchema)
+
 const RiskSchema = new Schema({
 	score: { required: true, type: Number, min: 0, max: 100 },
 	stocks: {
@@ -18,4 +25,6 @@ const RiskSchema = new Schema({
 	alternatives: { required: true, type: Number, min: 0, max: 100 },
 })
 
-export default model("Risk", RiskSchema)
+const RiskModel = model("Risk", RiskSchema)
+
+export { RiskModel, UserModel }

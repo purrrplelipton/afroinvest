@@ -2,7 +2,7 @@
 	--pry: hsl(0, 0%, 99%);
 	--sec: hsl(208, 100%, 22%);
 	min-height: 100%;
-	font-family: 'League Spartan', sans-serif;
+	font-family: "League Spartan", sans-serif;
 	font-display: swap;
 	font-weight: 600;
 	line-height: 1.5;
@@ -27,14 +27,19 @@
 
 @media only screen and (min-width: 1024px) {
 	:root {
-		font-size: 125%;
 		background-size: contain;
 		background-position: 100% 64px;
 	}
 }
 
+@media only screen and (min-width: 1366px) {
+	:root {
+		font-size: 125%;
+	}
+}
+
 @media only screen and (max-width: 1023px) {
-	:root[data-menuVisible='true'] {
+	:root[data-menuVisible="true"] {
 		pointer-events: none;
 		height: 100vh;
 		overflow: hidden;

@@ -1,18 +1,17 @@
+import { InvestingAmico } from "@app/assets/illustrations"
 import { GetStarted } from "@app/components/common/button"
-import { Wrapper } from "@app/components/common/wrapper"
-import styled from "styled-components"
+import Wrapper from "@app/components/common/wrapper"
 import React from "react"
+import styled from "styled-components"
 
 const Landing = styled(Wrapper)`
 	height: 93.75vh;
 	min-height: 625px;
-	display: flex;
-	flex-flow: column nowrap;
-	align-items: stretch;
+	display: grid;
+	align-items: center;
 
 	@media only screen and (min-width: 1024px) {
-		flex-flow: row nowrap;
-		align-items: center;
+		grid-template-columns: 1fr 1fr;
 	}
 
 	div {
@@ -21,6 +20,14 @@ const Landing = styled(Wrapper)`
 		@media only screen and (min-width: 1024px) {
 			max-width: 545px;
 			margin: 4em 0 0;
+		}
+
+		& + svg {
+			display: none;
+
+			@media only screen and (min-width: 1024px) {
+				display: initial;
+			}
 		}
 	}
 `
@@ -49,6 +56,7 @@ function Banner() {
 					<SubHeading>Make your money work for you by investing in personalized long term portfolios</SubHeading>
 					<GetStarted />
 				</div>
+				<InvestingAmico />
 			</Landing>
 		</section>
 	)
