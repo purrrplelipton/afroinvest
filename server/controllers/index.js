@@ -35,7 +35,7 @@ $.post("/users/auth", async ({ body }, rs) => {
 	}
 })
 
-$.get("/:score", async ({ params }, rs) => {
+$.get("/risksData/:score", async ({ params }, rs) => {
 	try {
 		const data = await RiskModel.findOne({ score: parseInt(params.score, 10) })
 

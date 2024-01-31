@@ -1,6 +1,6 @@
 import { Error } from "@app/assets/illustrations"
 import { ReactComponent as Loader } from "@app/assets/loader.svg"
-import { GetRiskData } from "@app/services"
+import { useResource } from "@app/hooks"
 import React from "react"
 import styled, { keyframes } from "styled-components"
 
@@ -154,7 +154,7 @@ const RiskDetails = styled.div`
 	}
 `
 
-const rotate = keyframes`
+export const spinKeyframe = keyframes`
   from {
     transform: rotate(0turn);
   } to {
@@ -174,8 +174,8 @@ const LoaderWrapper = styled.div`
 	align-items: center;
 	justify-content: center;
 
-	svg[data-is_loader="true"] {
-		animation: ${rotate} 0.875s linear infinite;
+	svg[data-is-loader="true"] {
+		animation: ${spinKeyframe} 0.8s linear infinite;
 	}
 
 	div {
@@ -210,34 +210,9 @@ const LoaderWrapper = styled.div`
 
 function RiskScoreSlider() {
 	const [score, setScore] = React.useState(6)
-	const [fetching, setFetching] = React.useState(false)
-	const [scoreData, setScoreData] = React.useState(null)
-	const [fetchingError, setFetchingError] = React.useState(null)
+	const [scoreData, services, loading, error] = useResource(`/risksData/${score}`)
 
-	React.useEffect(() => {
-		const timer = setTimeout(async () => {
-			try {
-				setFetching(true)
-				const { data } = await GetRiskData(score)
-				setScoreData(data)
-			} catch (error) {
-				console.error(error.message)
-				console.log(error)
-				setFetchingError(error)
-			} finally {
-				setFetching(false)
-			}
-		}, 1000)
-
-		return () => clearTimeout(timer)
-	}, [score])
-
-	const slideChangeHandler = (value) => {
-		setFetching(true)
-		setScoreData(null)
-		setFetchingError(null)
-		setScore(parseInt(value, 10))
-	}
+	React.useEffect(() => services.fetchtResources, [score])
 
 	return (
 		<div style={{ alignSelf: "start" }}>
@@ -256,18 +231,18 @@ function RiskScoreSlider() {
 						min={0}
 						max={10}
 						value={score}
-						onChange={({ target }) => slideChangeHandler(target.value)}
+						onChange={({ target }) => setScore(parseInt(target.value, 10))}
 					/>
 				</label>
 			</SliderWrapper>
 			<RiskDetails aria-live="polite">
-				{fetching && !scoreData && !fetchingError && (
+				{loading && !scoreData && !error && (
 					<LoaderWrapper>
-						<Loader data-is_loader="true" />
+						<Loader data-is-loader="true" />
 						<p>Calibrating portfolio...</p>
 					</LoaderWrapper>
 				)}
-				{!fetching && scoreData && !fetchingError && (
+				{!loading && scoreData && !error && (
 					<div className="score-data">
 						<div>
 							<span>Nigerian Stocks:</span>
@@ -311,11 +286,11 @@ function RiskScoreSlider() {
 						</div>
 					</div>
 				)}
-				{!fetching && !scoreData && fetchingError && (
+				{!loading && !scoreData && error && (
 					<LoaderWrapper>
 						<Error />
 						<div>
-							{fetchingError.statusCode && <span>{fetchingError.statusCode}</span>}
+							<span>{error}</span>
 							<p>Something went wrong, adjust the slider to try again.</p>
 						</div>
 					</LoaderWrapper>

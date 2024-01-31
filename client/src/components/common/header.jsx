@@ -150,9 +150,7 @@ function Header() {
 
 	React.useEffect(() => {
 		const handleScroll = () => setIsTop(window.scrollY < 64)
-
 		window.addEventListener("scroll", handleScroll)
-
 		return () => window.removeEventListener("scroll", handleScroll)
 	}, [])
 
@@ -195,7 +193,7 @@ function Header() {
 								<span>{x.label}</span>
 							</a>
 						))}
-						<SignIn />
+						<SignIn onClick={() => setMenuVisible(false)} />
 					</div>
 				</Nav>
 			</ContentWrapper>

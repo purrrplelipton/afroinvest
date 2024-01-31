@@ -29,11 +29,14 @@ const TabSelectorDiv = styled.div`
 	flex-flow: row nowrap;
 	gap: 0.5em;
 	align-items: center;
-	justify-content: center;
 	overflow: auto;
 	position: relative;
 	scroll-behavior: smooth;
 	margin: 0 auto 2em;
+
+	@media only screen and (min-width: 625px) {
+		justify-content: center;
+	}
 
 	label {
 		flex-shrink: 0;

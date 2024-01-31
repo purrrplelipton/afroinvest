@@ -57,8 +57,15 @@ const BlueBtn = styled(Btn)`
 const GoBack = React.forwardRef(($props, $ref) => {
 	const navigate = useNavigate()
 
+	function clickFunc() {
+		navigate(-1)
+		if ($props.onClick && typeof $props.onClick === "function") {
+			$props.onClick()
+		}
+	}
+
 	return (
-		<Btn {...$props} ref={$ref} onClick={() => navigate(-1)}>
+		<Btn {...$props} ref={$ref} onClick={clickFunc}>
 			<ArrowLeft />
 		</Btn>
 	)
@@ -69,8 +76,15 @@ GoBack.displayName = "GoBack"
 const SignIn = React.forwardRef(($props, $ref) => {
 	const navigate = useNavigate()
 
+	function clickFunc() {
+		navigate("/signIn")
+		if ($props.onClick && typeof $props.onClick === "function") {
+			$props.onClick()
+		}
+	}
+
 	return (
-		<BlueBtn {...$props} ref={$ref} onClick={() => navigate("/signIn")}>
+		<BlueBtn {...$props} ref={$ref} onClick={clickFunc}>
 			<span>Sign in</span>
 		</BlueBtn>
 	)
@@ -81,8 +95,15 @@ SignIn.displayName = "SignIn"
 const GetStarted = React.forwardRef(($props, $ref) => {
 	const navigate = useNavigate()
 
+	function clickFunc() {
+		navigate("/getStarted")
+		if ($props.onClick && typeof $props.onClick === "function") {
+			$props.onClick()
+		}
+	}
+
 	return (
-		<BlueBtn {...$props} ref={$ref} onClick={() => navigate("/getStarted")}>
+		<BlueBtn {...$props} ref={$ref} onClick={clickFunc}>
 			<span>Get started</span>
 		</BlueBtn>
 	)

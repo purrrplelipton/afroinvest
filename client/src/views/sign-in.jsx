@@ -1,11 +1,14 @@
 import { Eye, EyeClosed } from "@app/assets/icons"
 import { SignIn as SignInIllustration } from "@app/assets/illustrations"
+import { ReactComponent as Loader } from "@app/assets/loader.svg"
+import { ReactComponent as Underline } from "@app/assets/underline.svg"
 import { BlueBtn, Btn, GoBack } from "@app/components/common/button"
 import Wrapper from "@app/components/common/wrapper"
-import { useField } from "@app/hooks"
+import { spinKeyframe } from "@app/components/home/get-started/score-slider"
 import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { useField, useSubmission } from "../hooks"
 
 const Header = styled.header`
 	position: sticky;
@@ -50,16 +53,19 @@ const FormContainer = styled.div`
 	h2 {
 		font-size: 2.5em;
 		margin-bottom: 0.8em;
+		position: relative;
+		align-self: start;
+
+		& > svg {
+			position: absolute;
+			inset: auto 0 0 0;
+		}
 	}
 
 	form {
-		background-color: hsla(0, 0%, 0%, 5%);
+		background-color: hsla(0, 0%, 0%, 3%);
 		padding: 20px;
 		border-radius: 10px;
-
-
-
-		& >
 	}
 `
 
@@ -68,9 +74,10 @@ const FieldWrapper = styled.div`
 	flex-flow: column nowrap;
 	gap: 0.5em;
 	align-items: stretch;
+	position: relative;
 
 	&:not(:last-of-type) {
-		margin-bottom: 0.75em;
+		margin-bottom: 0.875em;
 	}
 
 	label {
@@ -94,33 +101,66 @@ const FieldWrapper = styled.div`
 					padding: 9px;
 
 					&:focus {
-						border-top-left-radius: 0;
-						border-top-right-radius: inherit;
-						border-bottom-right-radius: inherit;
-						border-bottom-left-radius: 0;
+						border-radius: inherit;
 						outline-offset: -3px;
 					}
 				}
 			}
 		}
+
+		& + span {
+			position: absolute;
+			align-self: end;
+			inset: calc(100%) auto auto auto;
+			line-height: 1;
+			font-size: 0.75em;
+			margin-top: 2px;
+			color: red;
+		}
 	}
 
-	&:has(> a) a {
-		font-size: 0.875em;
-		line-height: 1;
-		color: var(--sec);
-		align-self: end;
+	& + div:not([class]) {
+		display: flex;
+		align-items: center;
+		justify-content: end;
 
-		&:focus {
-			text-decoration: none;
+		a {
+			font-size: 0.875em;
+			line-height: 1;
+			color: var(--sec);
+			margin-top: 8px;
+
+			&:focus {
+				text-decoration: none;
+			}
 		}
 	}
 `
 
 const SubmitBtn = styled(BlueBtn).attrs(({ $type = "submit" }) => ({ type: $type }))`
-	display: block;
+	display: grid;
+	place-items: center;
 	margin-inline: auto;
 	margin-top: 2em;
+	width: 37.5%;
+	min-width: 80px;
+
+	&[aria-disabled="true"] {
+		opacity: 0.625;
+	}
+
+	&:has(i):has(svg) {
+		svg {
+			position: absolute;
+			animation: ${spinKeyframe} 0.8s linear infinite;
+		}
+
+		i {
+			all: unset;
+			display: block;
+			height: calc(1em * 1.125);
+		}
+	}
 `
 
 function SignIn() {
@@ -131,24 +171,20 @@ function SignIn() {
 		email: email.value,
 		password: password.value,
 	})
+	const [canSubmit, setCanSubmit] = React.useState(false)
+	const { handleSubmit, isLoading } = useSubmission("users/auth")
 
 	React.useEffect(() => {
 		setFormData({
 			email: email.value,
 			password: password.value,
 		})
+		setCanSubmit([!email.error, !password.error].every((v) => Boolean(v)))
 	}, [email.value, password.value])
 
-	const handleSubmit = async (e) => {
-		try {
-			e.preventDefault()
-			console.log(formData)
-			email.onChange({ value: "" })
-			password.onChange({ value: "" })
-			setFormData({ email: "", password: "" })
-		} catch ({ message }) {
-			console.error(message)
-		}
+	const onSubmit = async (e) => {
+		if (!canSubmit || isLoading) return
+		await handleSubmit(e, formData)
 	}
 
 	return (
@@ -162,16 +198,34 @@ function SignIn() {
 				<SignInWrapper>
 					<SignInIllustration />
 					<FormContainer>
-						<h2>Welcome back!</h2>
-						<form onSubmit={handleSubmit}>
+						<h2>
+							<span>Welcome back!</span>
+							<Underline />
+						</h2>
+						<form onSubmit={onSubmit}>
 							<FieldWrapper>
-								<label htmlFor="email">
-									<input placeholder="email" {...email} />
+								<label htmlFor="user_email">
+									<input
+										id="user_email"
+										type={email.type}
+										value={email.value}
+										onChange={email.onChange}
+										onBlur={email.onBlur}
+										placeholder="email"
+									/>
 								</label>
+								{email.error && email.touched && <span>{email.error}</span>}
 							</FieldWrapper>
 							<FieldWrapper>
-								<label htmlFor="pswrd">
-									<input placeholder="password" {...password} type={passwordVisible ? "text" : "password"} />
+								<label htmlFor="user_password">
+									<input
+										id="user_password"
+										type={passwordVisible ? "text" : password.type}
+										value={password.value}
+										onChange={password.onChange}
+										onBlur={password.onBlur}
+										placeholder="password"
+									/>
 									<Btn
 										onClick={() => setPasswordVisible((prv) => !prv)}
 										aria-label={`${passwordVisible ? "show" : "hide"} password`}
@@ -179,12 +233,20 @@ function SignIn() {
 										{passwordVisible ? <Eye /> : <EyeClosed />}
 									</Btn>
 								</label>
-								<Link to="/forgotPassword">Forgot password?</Link>
+								{password.error && password.touched && <span>{password.error}</span>}
 							</FieldWrapper>
-							<SubmitBtn type="submit">
-								<span>Sign in</span>
+							<div>
+								<Link to="/forgotPassword">Forgot password?</Link>
+							</div>
+							<SubmitBtn aria-disabled={!canSubmit || isLoading}>
+								{!isLoading && <span>Sign in</span>}
+								{isLoading && <i />}
+								{isLoading && <Loader />}
 							</SubmitBtn>
 						</form>
+						<p>
+							Don&apos;t have an account with us? <Link to="signUp">Sign up</Link>
+						</p>
 					</FormContainer>
 				</SignInWrapper>
 			</section>
