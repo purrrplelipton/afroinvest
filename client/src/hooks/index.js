@@ -1,5 +1,8 @@
+import { Color } from "@app/components/common/notify"
 import { default as __axios } from "axios"
 import React from "react"
+import { v4 } from "uuid"
+import { useNotify } from "../context/notify-context"
 
 const axios = __axios.create({ baseURL: "/gwy" })
 
@@ -17,13 +20,18 @@ export function useField(type) {
 			regex: /^[^\s@]+@[^\s@]+\.[^\W_]+$/,
 		},
 		password: {
+			minLength: 12,
+			maxLength: 64,
+			regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,64}$/,
+		},
+		text: {
 			minLength: 8,
 			maxLength: Infinity,
-			regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+			regex: /^[a-zA-Z]{2,24}(?:[\s-'.][a-zA-Z]{2,24})*$/,
 		},
 	}
 
-	React.useEffect(() => checkValidity(value), [])
+	React.useEffect(() => checkValidity(value), [value])
 
 	const checkValidity = (v) => {
 		try {
@@ -55,8 +63,8 @@ export function useField(type) {
 
 				setError(null)
 			})
-		} catch ({ message }) {
-			console.error("Error during validation:", message)
+		} catch (e) {
+			console.error("Error during validation:", e.message)
 			setError("An unexpected error occurred during validation.")
 		}
 	}
@@ -69,38 +77,52 @@ export function useField(type) {
 }
 
 export function useSubmission(url) {
-	const [isLoading, setIsLoading] = React.useState(false)
-	const [error, setError] = React.useState(null)
-	const [responseData, setResponseData] = React.useState(null)
+	const [processing, setProcessing] = React.useState(false)
+	const [data, setData] = React.useState(null)
+	const [, setNotifications] = useNotify()
 
 	const submitHandler = async (e, formData) => {
 		e.preventDefault()
 
-		setResponseData(null)
-		setIsLoading(true)
-		setError(null)
+		if (processing) return
+
+		setData(null)
+		setProcessing(true)
 
 		const delay = GetRandomNumber(1000, 2000)
 
 		try {
 			await new Promise(($) => setTimeout($, delay))
-			const { data } = await axios.post(url, formData)
-			setResponseData(data)
+			const { data: res } = await axios.post(url, formData)
+			setData(res)
 		} catch (e) {
-			if (e.response.data.error) setError(e.response.data.error)
-			else setError(e.message)
+			if (e.response.data.error)
+				return setNotifications((prv) =>
+					prv.concat({
+						id: v4(),
+						type: Color.error,
+						message: e.response.data.error,
+					}),
+				)
+			setNotifications((prv) =>
+				prv.concat({
+					id: v4(),
+					type: Color.error,
+					message: e.message,
+				}),
+			)
 		} finally {
-			setIsLoading(false)
+			setProcessing(false)
 		}
 	}
 
-	return { handleSubmit: async (e, formData) => await submitHandler(e, formData), isLoading, error, responseData }
+	return { handleSubmit: async (e, formData) => await submitHandler(e, formData), processing, data }
 }
 
 export function useResource(url) {
 	const [resources, setResources] = React.useState(null)
 	const [loading, setLoading] = React.useState(false)
-	const [error, setError] = React.useState(null)
+	const [, setNotifications] = useNotify()
 
 	function debounce(cb) {
 		const delay = GetRandomNumber(1000, 2000)
@@ -108,14 +130,27 @@ export function useResource(url) {
 		return async (...args) => {
 			setLoading(true)
 			setResources(null)
-			setError(null)
 
 			try {
 				await new Promise(($) => setTimeout($, delay))
 				await cb(...args)
-			} catch (e) {
-				if (e.response.data.error) setError(e.response.data.error)
-				else setError(e.message)
+			} catch (err) {
+				if (err.response.data.error)
+					return setNotifications((prv) =>
+						prv.concat({
+							id: v4(),
+							type: Color.error,
+							message: err.response.data.error,
+						}),
+					)
+
+				setNotifications((prv) =>
+					prv.concat({
+						id: v4(),
+						type: Color.error,
+						message: err.message,
+					}),
+				)
 			} finally {
 				setLoading(false)
 			}
@@ -145,5 +180,21 @@ export function useResource(url) {
 		services.fetchResources()
 	}, [url])
 
-	return [resources, services, loading, error]
+	return [resources, services, loading]
+}
+
+export function createNotification(props) {
+	const { type, message } = props
+
+	const parsedType = Object.keys(Color).includes(type) ? type : "info"
+
+	return { id: v4(), type: parsedType, message }
+}
+export function mergedSetTimeout(action1Fn, action2Fn, delay1, delay2) {
+	const timeoutId = setTimeout(() => {
+		action1Fn()
+		setTimeout(action2Fn, delay2)
+	}, delay1)
+
+	return () => clearTimeout(timeoutId)
 }

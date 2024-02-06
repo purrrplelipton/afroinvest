@@ -46,14 +46,14 @@ const Nav = styled.nav.attrs(({ $menuVisible = false }) => ({
 	$menuVisible,
 }))`
 	position: absolute;
-	z-index: 88;
+	z-index: 999;
 	inset: calc((2.5em * 0.800375) + 40px) 0 auto 0;
 	background-color: var(--pry);
 	border-radius: 0 0 10px 10px;
 	padding: 12px 0;
 	box-shadow: 0 12px 12px hsla(0, 0%, 0%, 0.03);
 	pointer-events: auto;
-	display: ${(props) => (props.$menuVisible ? "initial" : "none")};
+	display: ${({ $menuVisible }) => ($menuVisible ? "initial" : "none")};
 
 	@media only screen and (min-width: 1024px) {
 		position: static;
@@ -142,7 +142,7 @@ const routes = [
 ].map((o) => ({ ...o, id: uuidv4() }))
 
 function Header() {
-	const { menuVisible, setMenuVisible } = useMenu()
+	const [menuVisible, setMenuVisible] = useMenu()
 	const menuToggleRef = React.useRef()
 	const navRef = React.useRef()
 

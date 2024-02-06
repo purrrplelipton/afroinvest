@@ -3,7 +3,7 @@ import React from "react"
 
 const MenuContext = React.createContext()
 
-export function MenuProvider(props) {
+function MenuProvider(props) {
 	const [menuVisible, setMenuVisible] = React.useState(false)
 
 	React.useEffect(() => {
@@ -11,7 +11,7 @@ export function MenuProvider(props) {
 		root.setAttribute("data-menuVisible", menuVisible)
 	}, [menuVisible])
 
-	return <MenuContext.Provider value={{ menuVisible, setMenuVisible }}>{props.children}</MenuContext.Provider>
+	return <MenuContext.Provider value={[menuVisible, setMenuVisible]}>{props.children}</MenuContext.Provider>
 }
 
 MenuProvider.propTypes = { children: oneOfType([element, node]) }
@@ -23,3 +23,5 @@ export function useMenu() {
 	}
 	return context
 }
+
+export default MenuProvider

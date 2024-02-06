@@ -1,8 +1,8 @@
 import { Error } from "@app/assets/illustrations"
-import { ReactComponent as Loader } from "@app/assets/loader.svg"
+import Spinner from "@app/components/common/spinner"
 import { useResource } from "@app/hooks"
 import React from "react"
-import styled, { keyframes } from "styled-components"
+import styled from "styled-components"
 
 const SliderWrapper = styled.div`
 	color: #fff;
@@ -154,14 +154,6 @@ const RiskDetails = styled.div`
 	}
 `
 
-export const spinKeyframe = keyframes`
-  from {
-    transform: rotate(0turn);
-  } to {
-    transform: rotate(1turn);
-  }
-`
-
 const LoaderWrapper = styled.div`
 	font-weight: lighter;
 	font-size: 0.875em;
@@ -173,10 +165,6 @@ const LoaderWrapper = styled.div`
 	flex-flow: column nowrap;
 	align-items: center;
 	justify-content: center;
-
-	svg[data-is-loader="true"] {
-		animation: ${spinKeyframe} 0.8s linear infinite;
-	}
 
 	div {
 		text-align: center;
@@ -210,7 +198,7 @@ const LoaderWrapper = styled.div`
 
 function RiskScoreSlider() {
 	const [score, setScore] = React.useState(6)
-	const [scoreData, services, loading, error] = useResource(`/risksData/${score}`)
+	const [scoreData, services, loading, error] = useResource(`/risks/${score}`)
 
 	React.useEffect(() => services.fetchtResources, [score])
 
@@ -238,7 +226,7 @@ function RiskScoreSlider() {
 			<RiskDetails aria-live="polite">
 				{loading && !scoreData && !error && (
 					<LoaderWrapper>
-						<Loader data-is-loader="true" />
+						<Spinner />
 						<p>Calibrating portfolio...</p>
 					</LoaderWrapper>
 				)}

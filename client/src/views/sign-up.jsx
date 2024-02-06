@@ -1,13 +1,13 @@
 import { Eye, EyeClosed } from "@app/assets/icons"
-import { SignIn as SignInIllustration } from "@app/assets/illustrations"
+import { SignUp as SignUpIllustration } from "@app/assets/illustrations"
 import { ReactComponent as Underline } from "@app/assets/underline.svg"
 import { BlueBtn, Btn, GoBack } from "@app/components/common/button"
 import Spinner from "@app/components/common/spinner"
 import Wrapper from "@app/components/common/wrapper"
+import { useField, useSubmission } from "@app/hooks"
 import React from "react"
 import { Link } from "react-router-dom"
 import styled from "styled-components"
-import { useField, useSubmission } from "../hooks"
 
 const Header = styled.header`
 	position: sticky;
@@ -24,7 +24,7 @@ const HeaderContent = styled(Wrapper)`
 	}
 `
 
-const SignInWrapper = styled(Wrapper)`
+const SignUpWrapper = styled(Wrapper)`
 	display: grid;
 	align-items: center;
 	height: 87.5vh;
@@ -51,13 +51,15 @@ const FormContainer = styled.div`
 
 	h2 {
 		font-size: 2.5em;
+		line-height: 1;
 		margin-bottom: 0.8em;
 		position: relative;
 		align-self: start;
 
 		& > svg {
 			position: absolute;
-			inset: auto 0 0 0;
+			inset: 100% 0 auto 0;
+			/* transform: translateY(-37.5%); */
 		}
 	}
 
@@ -164,22 +166,25 @@ const SubmitBtn = styled(BlueBtn).attrs(({ $type = "submit" }) => ({ type: $type
 	}
 `
 
-function SignIn() {
+function SignUp() {
+	const fullName = useField("text")
 	const email = useField("email")
 	const password = useField("password")
 	const [passwordVisible, setPasswordVisible] = React.useState(false)
 	const [formData, setFormData] = React.useState({
+		fullName: fullName.value,
 		email: email.value,
 		password: password.value,
 	})
-	const { handleSubmit, ...rest } = useSubmission("users/authenticate")
+	const { handleSubmit, ...rest } = useSubmission("users/authorize")
 
 	React.useEffect(() => {
 		setFormData({
+			fullName: fullName.value,
 			email: email.value,
 			password: password.value,
 		})
-	}, [email.value, password.value])
+	}, [fullName.value, email.value, password.value])
 
 	return (
 		<>
@@ -189,23 +194,38 @@ function SignIn() {
 				</HeaderContent>
 			</Header>
 			<section>
-				<SignInWrapper>
-					<SignInIllustration />
+				<SignUpWrapper>
+					<SignUpIllustration />
 					<FormContainer>
 						<h2>
-							<span>Welcome back!</span>
+							<span>Start your wealth creating journey!</span>
 							<Underline />
 						</h2>
 						<form onSubmit={async (e) => await handleSubmit(e, formData)}>
 							<FieldWrapper>
-								<label htmlFor="user_email">
+								<label htmlFor="fullName">
 									<input
-										id="user_email"
+										id="fullName"
+										type={fullName.type}
+										value={fullName.value}
+										onChange={fullName.onChange}
+										onBlur={fullName.onBlur}
+										placeholder="full name"
+										autoComplete="off"
+									/>
+								</label>
+								{fullName.error && fullName.touched && <span>{fullName.error}</span>}
+							</FieldWrapper>
+							<FieldWrapper>
+								<label htmlFor="email">
+									<input
+										id="email"
 										type={email.type}
 										value={email.value}
 										onChange={email.onChange}
 										onBlur={email.onBlur}
 										placeholder="email"
+										autoComplete="off"
 									/>
 								</label>
 								{email.error && email.touched && <span>{email.error}</span>}
@@ -229,21 +249,18 @@ function SignIn() {
 								</label>
 								{password.error && password.touched && <span>{password.error}</span>}
 							</FieldWrapper>
-							<div>
-								<Link to="/forgotpassword">Forgot password?</Link>
-							</div>
 							<SubmitBtn aria-disabled={rest.processing}>
-								{rest.processing ? <Spinner /> : <span>Sign in</span>}
+								{rest.processing ? <Spinner /> : <span>Sign up</span>}
 							</SubmitBtn>
 						</form>
 						<p>
-							Don&apos;t have an account with us? <Link to="/signup">Sign up</Link>
+							Already have an account? <Link to="/signin">Sign in</Link>
 						</p>
 					</FormContainer>
-				</SignInWrapper>
+				</SignUpWrapper>
 			</section>
 		</>
 	)
 }
 
-export default SignIn
+export default SignUp

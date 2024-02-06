@@ -77,7 +77,7 @@ const SignIn = React.forwardRef(($props, $ref) => {
 	const navigate = useNavigate()
 
 	function clickFunc() {
-		navigate("/signIn")
+		navigate("/signin")
 		if ($props.onClick && typeof $props.onClick === "function") {
 			$props.onClick()
 		}
@@ -96,7 +96,7 @@ const GetStarted = React.forwardRef(($props, $ref) => {
 	const navigate = useNavigate()
 
 	function clickFunc() {
-		navigate("/getStarted")
+		navigate("/getstarted")
 		if ($props.onClick && typeof $props.onClick === "function") {
 			$props.onClick()
 		}
