@@ -19,13 +19,14 @@
 		"start": "yarn start:client && yarn start:server"
 	},
 	"dependencies": {
-		"concurrently": "^8.2.2"
+		"zxcvbn": "^4.4.2"
 	},
 	"devDependencies": {
 		"@babel/core": "7.23.7",
 		"@babel/eslint-parser": "7.23.3",
 		"@babel/preset-env": "^7.23.8",
 		"@babel/preset-react": "7.23.3",
+		"concurrently": "^8.2.2",
 		"eslint": "^8.56.0",
 		"prettier": "^3.2.4"
 	},

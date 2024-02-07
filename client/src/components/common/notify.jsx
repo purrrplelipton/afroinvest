@@ -4,27 +4,7 @@ import { Btn } from "@app/components/common/button"
 import { mergedSetTimeout } from "@app/hooks"
 import { element, func, node, oneOf, oneOfType } from "prop-types"
 import React from "react"
-import styled, { css, keyframes } from "styled-components"
-
-const SlideIn = keyframes`
-	from {
-		opacity: 0;
-		transform: translateX(150%);
-	} to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-`
-
-const SlideOut = keyframes`
-	from {
-		opacity: 1;
-		transform: translateX(0);
-	} to {
-		opacity: 0;
-		transform: translateX(150%);
-	}
-`
+import styled, { css } from "styled-components"
 
 const NotificationWrapper = styled.div`
 	${({ $type }) => css`
@@ -48,13 +28,6 @@ const NotificationWrapper = styled.div`
 	justify-content: space-between;
 	width: 100%;
 	max-width: 320px;
-
-	${({ $visible }) => css`
-		opacity: ${$visible ? 1 : 0};
-		transform: translateX(${$visible ? 0 : "150%"});
-		animation: ${$visible ? SlideIn : SlideOut} 0.5s ease-in-out both;
-		max-height: ${$visible ? "0" : "none"};
-	`}
 
 	@media only screen and (min-width: 768px) {
 		max-width: 375px;
@@ -126,7 +99,7 @@ function Notify(props) {
 	}, [visible])
 
 	return (
-		<NotificationWrapper $type={parsedType} $visible={visible}>
+		<NotificationWrapper $type={parsedType}>
 			<div>
 				{getIcon(parsedType)}
 				<p>{children}</p>

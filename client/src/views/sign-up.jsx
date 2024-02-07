@@ -1,4 +1,4 @@
-import { Eye, EyeClosed } from "@app/assets/icons"
+import { Eye, EyeClosed, Point } from "@app/assets/icons"
 import { SignUp as SignUpIllustration } from "@app/assets/illustrations"
 import { ReactComponent as Underline } from "@app/assets/underline.svg"
 import { BlueBtn, Btn, GoBack } from "@app/components/common/button"
@@ -17,21 +17,23 @@ const Header = styled.header`
 
 const HeaderContent = styled(Wrapper)`
 	max-width: 1366px;
-	padding-block: 20px;
-
-	& > button {
-		margin-block: 13px;
-	}
+	padding-block: 22px;
 `
 
 const SignUpWrapper = styled(Wrapper)`
-	display: grid;
-	align-items: center;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: stretch;
 	height: 87.5vh;
 	min-height: 625px;
 
 	@media only screen and (min-width: 1024px) {
-		grid-template-columns: 1fr 1fr;
+		flex-flow: row nowrap;
+
+		& > * {
+			flex-shrink: 0;
+			width: 50%;
+		}
 	}
 
 	& > svg {
@@ -44,13 +46,15 @@ const SignUpWrapper = styled(Wrapper)`
 `
 
 const FormContainer = styled.div`
+	margin-top: auto;
+	margin-bottom: 25%;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: stretch;
 	justify-content: center;
 
 	h2 {
-		font-size: 2.5em;
+		font-size: 1.33333em;
 		line-height: 1;
 		margin-bottom: 0.8em;
 		position: relative;
@@ -59,17 +63,16 @@ const FormContainer = styled.div`
 		& > svg {
 			position: absolute;
 			inset: 100% 0 auto 0;
-			/* transform: translateY(-37.5%); */
+			transform: translateY(-25%);
 		}
 	}
 
 	form {
-		background-color: hsla(0, 0%, 0%, 3%);
-		padding: 20px;
-		border-radius: 10px;
+		position: relative;
+		padding: 24px 0;
+		margin-bottom: 32px;
 
 		& + p {
-			margin-top: 1em;
 			text-align: center;
 
 			a {
@@ -86,80 +89,124 @@ const FormContainer = styled.div`
 `
 
 const FieldWrapper = styled.div`
+	font-size: 1.25em;
+	line-height: 1;
 	display: flex;
 	flex-flow: column nowrap;
-	gap: 0.5em;
+	gap: 8px;
 	align-items: stretch;
 	position: relative;
+	margin-bottom: 24px;
 
-	&:not(:last-of-type) {
-		margin-bottom: 1.375em;
+	&:last-of-type {
+		margin-bottom: 40px;
 	}
 
 	label {
-		background-color: var(--pry);
+		--x-gap: 0.8em;
+		--y-gap: 0.7em;
 		display: flex;
 		align-items: center;
-		border-radius: 8px;
-		overflow: hidden;
+		position: relative;
 
 		input {
-			font-size: 1.25em;
-			line-height: 1;
 			width: 100%;
-			padding: 0.6em 0.75em;
+			padding-inline: var(--x-gap);
+			padding-block: var(--y-gap);
 
-			&:has(+ button) {
+			&::placeholder {
+				color: inherit;
+				opacity: 0;
+			}
+
+			&:has(~ button) {
 				padding-right: 0;
 
-				& + button {
+				& ~ button {
 					flex-shrink: 0;
 					padding: 9px;
 
 					&:focus {
-						border-radius: inherit;
-						outline-offset: -3px;
+						outline-offset: -2px;
 					}
 				}
 			}
-		}
 
-		& + span {
-			position: absolute;
-			align-self: end;
-			inset: calc(100%) auto auto auto;
-			line-height: 1;
-			font-size: 0.75em;
-			margin-top: 4px;
-			color: red;
+			& ~ i {
+				all: unset;
+				position: absolute;
+				overflow: hidden;
+				inset: calc(100% - 2px) 0 0 0;
+				background-color: hsla(0, 0%, 0%, 20%);
+
+				&::before {
+					content: "";
+					position: absolute;
+					inset: 0;
+					background-color: var(--sec);
+					transform: translateX(calc(-100% - 1em));
+					transition: transform 0.3s ease-in-out;
+				}
+			}
+
+			&:focus,
+			&:not([value=""]) {
+				& ~ i::before {
+					transform: translateX(0);
+				}
+			}
+
+			& ~ span {
+				position: absolute;
+				pointer-events: none;
+				user-select: none;
+				top: var(--y-gap);
+				left: var(--x-gap);
+				opacity: 0.99999;
+				transition:
+					opacity 0.2s ease-in-out,
+					font-size 0.2s ease-in-out,
+					top 0.2s ease-in-out,
+					left 0.2s ease-in-out;
+			}
+
+			&:not([value=""]) {
+				& ~ span {
+					opacity: 0.66666;
+					font-size: 0.75em;
+					top: calc(0.125 * var(--y-gap));
+					left: 0;
+				}
+			}
 		}
 	}
 
-	& + div:not([class]) {
-		display: flex;
-		align-items: center;
-		justify-content: end;
+	&[data-for="password"] {
+		margin-bottom: 3em;
 
-		a {
+		& + div {
 			font-size: 0.875em;
-			line-height: 1;
-			color: var(--sec);
-			margin-top: 2px;
+			line-height: 1.125;
 
-			&:focus {
-				text-decoration: none;
+			p {
+				font-weight: lighter;
+				margin-bottom: 0.25em;
+
+				span {
+					font-weight: 600;
+				}
 			}
 		}
 	}
 `
 
-const SubmitBtn = styled(BlueBtn).attrs(({ $type = "submit" }) => ({ type: $type }))`
+const SubmitBtn = styled(BlueBtn).attrs(() => ({ type: "submit" }))`
 	display: grid;
 	place-items: center;
-	margin-inline: auto;
-	margin-top: 2em;
+	margin: auto;
 	width: 37.5%;
 	min-width: 80px;
+	max-width: 12ch;
 
 	&[aria-disabled="true"] {
 		opacity: 0.625;
@@ -204,51 +251,56 @@ function SignUp() {
 						<form onSubmit={async (e) => await handleSubmit(e, formData)}>
 							<FieldWrapper>
 								<label htmlFor="fullName">
-									<input
-										id="fullName"
-										type={fullName.type}
-										value={fullName.value}
-										onChange={fullName.onChange}
-										onBlur={fullName.onBlur}
-										placeholder="full name"
-										autoComplete="off"
-									/>
+									<input id="fullName" {...fullName} placeholder="full name" />
+									<span>full name</span>
+									<i />
 								</label>
-								{fullName.error && fullName.touched && <span>{fullName.error}</span>}
 							</FieldWrapper>
 							<FieldWrapper>
 								<label htmlFor="email">
-									<input
-										id="email"
-										type={email.type}
-										value={email.value}
-										onChange={email.onChange}
-										onBlur={email.onBlur}
-										placeholder="email"
-										autoComplete="off"
-									/>
+									<input id="email" {...email} placeholder="email" />
+									<span>email</span>
+									<i />
 								</label>
-								{email.error && email.touched && <span>{email.error}</span>}
 							</FieldWrapper>
-							<FieldWrapper>
-								<label htmlFor="user_password">
-									<input
-										id="user_password"
-										type={passwordVisible ? "text" : password.type}
-										value={password.value}
-										onChange={password.onChange}
-										onBlur={password.onBlur}
-										placeholder="password"
-									/>
-									<Btn
-										onClick={() => setPasswordVisible((prv) => !prv)}
-										aria-label={`${passwordVisible ? "show" : "hide"} password`}
-									>
-										{passwordVisible ? <Eye /> : <EyeClosed />}
-									</Btn>
-								</label>
-								{password.error && password.touched && <span>{password.error}</span>}
-							</FieldWrapper>
+							<div>
+								<FieldWrapper data-for="password">
+									<label htmlFor="password">
+										<input
+											id="password"
+											{...password}
+											type={passwordVisible ? "text" : password.type}
+											placeholder="password"
+										/>
+										<span>password</span>
+										<i />
+										<Btn
+											onClick={() => setPasswordVisible((prv) => !prv)}
+											aria-label={`${passwordVisible ? "hide" : "show"} password`}
+										>
+											{passwordVisible ? <Eye /> : <EyeClosed />}
+										</Btn>
+									</label>
+								</FieldWrapper>
+								<div hidden>
+									<p>
+										<span>Be long:</span> Ensure passwords are a minimum of 12 characters in length, with 14 characters
+										or more being preferable.
+									</p>
+									<p>
+										<span>Be strong:</span> Craft robust passwords with a blend of uppercase and lowercase letters,
+										numbers, and symbols. Avoid strings, repetitions, dictionary words, or names of people, characters,
+										products, or organizations.
+									</p>
+									<p>
+										<span>Be random:</span> Craft secure passwords with random elements like mixed-case letters,
+										numbers, symbols, or opt for a 5-7 word passphrase.
+									</p>
+									<p>
+										<span>Be unique:</span> Passwords should be used for one and only one account.
+									</p>
+								</div>
+							</div>
 							<SubmitBtn aria-disabled={rest.processing}>
 								{rest.processing ? <Spinner /> : <span>Sign up</span>}
 							</SubmitBtn>

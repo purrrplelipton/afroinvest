@@ -1,4 +1,3 @@
-import { validatePasswordStrength } from "@afroinvest/shared_utils"
 import { compare, hash } from "bcrypt"
 import { Router } from "express"
 import _pkg from "jsonwebtoken"
@@ -64,10 +63,6 @@ $.post("/users/authorize", async ({ body }, res) => {
 
 	if (!isEmail(email)) {
 		return res.status(400).json({ error: "Invalid email format" })
-	}
-
-	if (!validatePasswordStrength(password)) {
-		return res.status(400).json({ error: "Password must be strong" })
 	}
 
 	try {

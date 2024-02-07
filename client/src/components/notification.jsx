@@ -21,30 +21,38 @@ const Container = styled.div`
 `
 
 function Notification() {
-	const [notifications, setNotifications] = useNotify()
+	const { notifications, dismissNotification } = useNotify()
+	const [dismissQueue, setDismissQueue] = React.useState([])
 
 	React.useEffect(() => {
-		let timeoutId = null
+		let timeoutId
 
-		if (notifications.length) {
-			timeoutId = setInterval(() => {
-				setNotifications((prvNotifs) => prvNotifs.slice(1))
-			}, 5000)
+		if (dismissQueue.length) {
+			timeoutId = setTimeout(() => {
+				const dismissedId = dismissQueue[dismissQueue.length - 1]
+				setDismissQueue((prv) => prv.slice(1))
+				dismissNotification(dismissedId)
+			}, 500)
+			return () => clearTimeout(timeoutId)
+		}
+	}, [dismissQueue])
+
+	React.useEffect(() => {
+		let timeoutId
+
+		if (notifications.length && !dismissQueue.length) {
+			timeoutId = setInterval(() => setDismissQueue((prv) => [notifications[0].id, ...prv]), 5000)
 		}
 
 		return () => clearInterval(timeoutId)
-	}, [notifications])
+	}, [notifications, dismissQueue])
 
 	if (notifications.length)
 		return (
 			<Container>
 				<div>
 					{notifications.map(({ id, ...rs }) => (
-						<Notify
-							key={id}
-							type={rs.type}
-							dismissFN={() => setNotifications((prv) => prv.filter((nt) => nt.id !== id))}
-						>
+						<Notify key={id} type={rs.type} dismissFN={() => setDismissQueue((prv) => [id, ...prv])}>
 							{rs.message}
 						</Notify>
 					))}

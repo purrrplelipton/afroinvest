@@ -1,7 +1,6 @@
 import { Color } from "@app/components/common/notify"
 import { default as __axios } from "axios"
 import React from "react"
-import { v4 } from "uuid"
 import { useNotify } from "../context/notify-context"
 
 const axios = __axios.create({ baseURL: "/gwy" })
@@ -12,8 +11,6 @@ export function GetRandomNumber(min = 0, max = 1) {
 
 export function useField(type) {
 	const [value, setValue] = React.useState("")
-	const [error, setError] = React.useState(null)
-	const [touched, setTouched] = React.useState(false)
 
 	const types = {
 		email: {
@@ -21,65 +18,24 @@ export function useField(type) {
 		},
 		password: {
 			minLength: 12,
-			maxLength: 64,
-			regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,64}$/,
+			regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d]{12,}$/,
 		},
 		text: {
-			minLength: 8,
-			maxLength: Infinity,
-			regex: /^[a-zA-Z]{2,24}(?:[\s-'.][a-zA-Z]{2,24})*$/,
+			minLength: 3,
+			maxLength: 64,
+			regex: /^[a-zA-Z](?:[\s-'.][a-zA-Z])*$/,
 		},
-	}
-
-	React.useEffect(() => checkValidity(value), [value])
-
-	const checkValidity = (v) => {
-		try {
-			const fieldType = types[type]
-			if (!fieldType) throw new Error(`Invalid field type: ${type}`)
-
-			Object.keys(fieldType).forEach((rule) => {
-				if (!v.trim() && ["minLength", "maxLength"].includes(rule)) return
-
-				const validation = fieldType[rule]
-				const isValid =
-					rule === "regex"
-						? validation.test(v)
-						: rule === "minLength"
-							? v.trim().length >= validation
-							: rule === "maxLength"
-								? v.trim().length <= validation
-								: Boolean(v)
-
-				if (v.trim() && !isValid) {
-					return setError(
-						`${type} ${
-							rule === "regex"
-								? "doesn't meet the required format"
-								: `must be ${rule === "minLength" ? "at least" : "at most"} ${validation} characters long`
-						}`,
-					)
-				}
-
-				setError(null)
-			})
-		} catch (e) {
-			console.error("Error during validation:", e.message)
-			setError("An unexpected error occurred during validation.")
-		}
 	}
 
 	const onChange = ({ target }) => setValue(target.value)
 
-	const onBlur = ({ target }) => setTouched(Boolean(target.value.trim()))
-
-	return { type, value, onChange, error, onBlur, touched }
+	return { type, value, onChange }
 }
 
 export function useSubmission(url) {
 	const [processing, setProcessing] = React.useState(false)
 	const [data, setData] = React.useState(null)
-	const [, setNotifications] = useNotify()
+	const { appendNotification } = useNotify()
 
 	const submitHandler = async (e, formData) => {
 		e.preventDefault()
@@ -97,20 +53,15 @@ export function useSubmission(url) {
 			setData(res)
 		} catch (e) {
 			if (e.response.data.error)
-				return setNotifications((prv) =>
-					prv.concat({
-						id: v4(),
-						type: Color.error,
-						message: e.response.data.error,
-					}),
-				)
-			setNotifications((prv) =>
-				prv.concat({
-					id: v4(),
+				appendNotification({
 					type: Color.error,
-					message: e.message,
-				}),
-			)
+					message: e.response.data.error,
+				})
+
+			appendNotification({
+				type: Color.error,
+				message: e.message,
+			})
 		} finally {
 			setProcessing(false)
 		}
@@ -122,7 +73,7 @@ export function useSubmission(url) {
 export function useResource(url) {
 	const [resources, setResources] = React.useState(null)
 	const [loading, setLoading] = React.useState(false)
-	const [, setNotifications] = useNotify()
+	const { appendNotification } = useNotify()
 
 	function debounce(cb) {
 		const delay = GetRandomNumber(1000, 2000)
@@ -136,21 +87,15 @@ export function useResource(url) {
 				await cb(...args)
 			} catch (err) {
 				if (err.response.data.error)
-					return setNotifications((prv) =>
-						prv.concat({
-							id: v4(),
-							type: Color.error,
-							message: err.response.data.error,
-						}),
-					)
-
-				setNotifications((prv) =>
-					prv.concat({
-						id: v4(),
+					return appendNotification({
 						type: Color.error,
-						message: err.message,
-					}),
-				)
+						message: err.response.data.error,
+					})
+
+				appendNotification({
+					type: Color.error,
+					message: err.message,
+				})
 			} finally {
 				setLoading(false)
 			}
@@ -183,13 +128,6 @@ export function useResource(url) {
 	return [resources, services, loading]
 }
 
-export function createNotification(props) {
-	const { type, message } = props
-
-	const parsedType = Object.keys(Color).includes(type) ? type : "info"
-
-	return { id: v4(), type: parsedType, message }
-}
 export function mergedSetTimeout(action1Fn, action2Fn, delay1, delay2) {
 	const timeoutId = setTimeout(() => {
 		action1Fn()
