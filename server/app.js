@@ -4,18 +4,18 @@ import mongoose from "mongoose"
 import morgan from "morgan"
 import $ from "./controllers/index.js"
 import { URI } from "./utils/config.js"
-import { error, info } from "./utils/logger.js"
+import { ErrorHandler, UnknownEndpoint } from "./utils/middleware.js"
 
 const app = express()
 
 mongoose.set({ strictQuery: true, runValidators: true })
 
-info("connecting to MongoDB")
+console.info("connecting to MongoDB")
 try {
 	await mongoose.connect(URI)
-	info("connected to MongoDB")
+	console.info("connected to MongoDB")
 } catch ({ message }) {
-	error("error connecting to MongoDB", message)
+	console.error("error connecting to MongoDB", message)
 }
 
 app.use(cors())
@@ -24,5 +24,8 @@ app.use(express.json())
 app.use(morgan("dev"))
 
 app.use("/gwy", $)
+
+app.use(ErrorHandler)
+app.use(UnknownEndpoint)
 
 export default app

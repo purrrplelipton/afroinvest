@@ -1,13 +1,17 @@
-import { Eye, EyeClosed, Point } from "@app/assets/icons"
+import { Eye, EyeClosed } from "@app/assets/icons"
 import { SignUp as SignUpIllustration } from "@app/assets/illustrations"
 import { ReactComponent as Underline } from "@app/assets/underline.svg"
 import { BlueBtn, Btn, GoBack } from "@app/components/common/button"
 import Spinner from "@app/components/common/spinner"
+import StrengthMeter from "@app/components/common/strength-meter"
 import Wrapper from "@app/components/common/wrapper"
-import { useField, useSubmission } from "@app/hooks"
+import { useNotify } from "@app/context/notify-context"
+import { Color, useField, useSubmission } from "@app/hooks"
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, Route, Routes, useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import EmailConfirmation from "./email-confirmation"
+import SignUpSuccessful from "./sign-up-successful"
 
 const Header = styled.header`
 	position: sticky;
@@ -52,6 +56,10 @@ const FormContainer = styled.div`
 	flex-flow: column nowrap;
 	align-items: stretch;
 	justify-content: center;
+
+	@media only screen and (min-width: 1024px) {
+		margin-block: auto;
+	}
 
 	h2 {
 		font-size: 1.33333em;
@@ -109,6 +117,29 @@ const FieldWrapper = styled.div`
 		align-items: center;
 		position: relative;
 
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			inset: calc(100% - 2px) 0 0 0;
+			transition: transform 0.3s;
+			background-color: hsla(0, 0%, 0%, 8%);
+		}
+
+		&::after {
+			left: 0;
+			right: 100%;
+			transition: right 0.3s;
+			background-color: var(--sec);
+		}
+
+		&:has(input:focus),
+		&:has(input:not(input[value=""])) {
+			&::after {
+				right: 0;
+			}
+		}
+
 		input {
 			width: 100%;
 			padding-inline: var(--x-gap);
@@ -125,34 +156,12 @@ const FieldWrapper = styled.div`
 				& ~ button {
 					flex-shrink: 0;
 					padding: 9px;
+					display: grid;
+					place-items: center;
 
 					&:focus {
 						outline-offset: -2px;
 					}
-				}
-			}
-
-			& ~ i {
-				all: unset;
-				position: absolute;
-				overflow: hidden;
-				inset: calc(100% - 2px) 0 0 0;
-				background-color: hsla(0, 0%, 0%, 20%);
-
-				&::before {
-					content: "";
-					position: absolute;
-					inset: 0;
-					background-color: var(--sec);
-					transform: translateX(calc(-100% - 1em));
-					transition: transform 0.3s ease-in-out;
-				}
-			}
-
-			&:focus,
-			&:not([value=""]) {
-				& ~ i::before {
-					transform: translateX(0);
 				}
 			}
 
@@ -162,40 +171,29 @@ const FieldWrapper = styled.div`
 				user-select: none;
 				top: var(--y-gap);
 				left: var(--x-gap);
-				opacity: 0.99999;
+				opacity: 0.66666;
 				transition:
-					opacity 0.2s ease-in-out,
-					font-size 0.2s ease-in-out,
-					top 0.2s ease-in-out,
-					left 0.2s ease-in-out;
+					opacity 0.2s,
+					font-size 0.2s,
+					top 0.2s,
+					left 0.2s;
 			}
 
 			&:not([value=""]) {
 				& ~ span {
-					opacity: 0.66666;
+					opacity: 0.33333;
 					font-size: 0.75em;
 					top: calc(0.125 * var(--y-gap));
 					left: 0;
 				}
 			}
 		}
-	}
 
-	&[data-for="password"] {
-		margin-bottom: 3em;
-
-		& + div {
-			font-size: 0.875em;
-			line-height: 1.125;
-
-			p {
-				font-weight: lighter;
-				margin-bottom: 0.25em;
-
-				span {
-					font-weight: 600;
-				}
-			}
+		&[for="password"] + div {
+			margin-top: 4px;
+			font-size: 0.75em;
+			position: absolute;
+			inset: 100% 0 auto 0;
 		}
 	}
 `
@@ -213,17 +211,20 @@ const SubmitBtn = styled(BlueBtn).attrs(() => ({ type: "submit" }))`
 	}
 `
 
-function SignUp() {
+const SignUpForm = () => {
+	const navigate = useNavigate()
 	const fullName = useField("text")
 	const email = useField("email")
 	const password = useField("password")
+	const { appendNotification } = useNotify()
 	const [passwordVisible, setPasswordVisible] = React.useState(false)
 	const [formData, setFormData] = React.useState({
 		fullName: fullName.value,
 		email: email.value,
 		password: password.value,
 	})
-	const { handleSubmit, ...rest } = useSubmission("users/authorize")
+
+	const { handleSubmit, processing, data } = useSubmission("users/authorize")
 
 	React.useEffect(() => {
 		setFormData({
@@ -232,6 +233,31 @@ function SignUp() {
 			password: password.value,
 		})
 	}, [fullName.value, email.value, password.value])
+
+	const handleSignUp = async (e) => {
+		const fieldReset = { target: { value: "" } }
+
+		try {
+			await handleSubmit(e, formData)
+			setTimeout(() => {
+				if (data && data.message) {
+					fullName.onChange(fieldReset)
+					password.onChange(fieldReset)
+					setTimeout(() => email.onChange(fieldReset), 1111)
+					navigate("Successful", { state: { email: formData.email }, replace: true })
+				}
+			}, 555)
+		} catch (e) {
+			const { error } = console
+			if (e.response && e.response.data.error) {
+				error("API error:", e.response.data.error)
+				appendNotification({ type: Color.error, message: e.response.data.error })
+			} else {
+				error("Error:", e.message)
+				appendNotification({ type: Color.error, message: "An error occurred." })
+			}
+		}
+	}
 
 	return (
 		<>
@@ -248,70 +274,59 @@ function SignUp() {
 							<span>Start your wealth creating journey!</span>
 							<Underline />
 						</h2>
-						<form onSubmit={async (e) => await handleSubmit(e, formData)}>
+						<form onSubmit={handleSignUp}>
 							<FieldWrapper>
 								<label htmlFor="fullName">
 									<input id="fullName" {...fullName} placeholder="full name" />
 									<span>full name</span>
-									<i />
 								</label>
 							</FieldWrapper>
 							<FieldWrapper>
 								<label htmlFor="email">
 									<input id="email" {...email} placeholder="email" />
 									<span>email</span>
-									<i />
 								</label>
 							</FieldWrapper>
-							<div>
-								<FieldWrapper data-for="password">
-									<label htmlFor="password">
-										<input
-											id="password"
-											{...password}
-											type={passwordVisible ? "text" : password.type}
-											placeholder="password"
-										/>
-										<span>password</span>
-										<i />
-										<Btn
-											onClick={() => setPasswordVisible((prv) => !prv)}
-											aria-label={`${passwordVisible ? "hide" : "show"} password`}
-										>
-											{passwordVisible ? <Eye /> : <EyeClosed />}
-										</Btn>
-									</label>
-								</FieldWrapper>
-								<div hidden>
-									<p>
-										<span>Be long:</span> Ensure passwords are a minimum of 12 characters in length, with 14 characters
-										or more being preferable.
-									</p>
-									<p>
-										<span>Be strong:</span> Craft robust passwords with a blend of uppercase and lowercase letters,
-										numbers, and symbols. Avoid strings, repetitions, dictionary words, or names of people, characters,
-										products, or organizations.
-									</p>
-									<p>
-										<span>Be random:</span> Craft secure passwords with random elements like mixed-case letters,
-										numbers, symbols, or opt for a 5-7 word passphrase.
-									</p>
-									<p>
-										<span>Be unique:</span> Passwords should be used for one and only one account.
-									</p>
-								</div>
-							</div>
-							<SubmitBtn aria-disabled={rest.processing}>
-								{rest.processing ? <Spinner /> : <span>Sign up</span>}
-							</SubmitBtn>
+							<FieldWrapper>
+								<label htmlFor="password">
+									<input
+										id="password"
+										{...password}
+										type={passwordVisible ? "text" : password.type}
+										placeholder="password"
+									/>
+									<span>password</span>
+									<Btn
+										onClick={() => setPasswordVisible((prv) => !prv)}
+										aria-label={`${passwordVisible ? "hide" : "show"} password`}
+									>
+										{passwordVisible ? <EyeClosed /> : <Eye />}
+									</Btn>
+								</label>
+								<StrengthMeter password={password.value} />
+							</FieldWrapper>
+							<SubmitBtn aria-disabled={processing}>{processing ? <Spinner /> : <span>Sign up</span>}</SubmitBtn>
 						</form>
 						<p>
-							Already have an account? <Link to="/signin">Sign in</Link>
+							Already have an account?&nbsp;
+							<Link to="/SignIn" replace>
+								Sign in
+							</Link>
 						</p>
 					</FormContainer>
 				</SignUpWrapper>
 			</section>
 		</>
+	)
+}
+
+function SignUp() {
+	return (
+		<Routes>
+			<Route index element={<SignUpForm />} />
+			<Route path="Successful" element={<SignUpSuccessful />} />
+			<Route path="EmailConfirmation/:token" element={<EmailConfirmation />} />
+		</Routes>
 	)
 }
 

@@ -13,7 +13,6 @@
 	},
 	"dependencies": {
 		"@afroinvest/server": "*",
-		"@afroinvest/shared_utils": "*",
 		"@svgr/rollup": "^8.1.0",
 		"axios": "^1.6.7",
 		"framer-motion": "^11.0.3",

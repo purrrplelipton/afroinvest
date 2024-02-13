@@ -1,9 +1,15 @@
-import { Color } from "@app/components/common/notify"
 import { default as __axios } from "axios"
 import React from "react"
 import { useNotify } from "../context/notify-context"
 
-const axios = __axios.create({ baseURL: "/gwy" })
+export const axios = __axios.create({ baseURL: "/gwy" })
+
+export const Color = {
+	info: "info",
+	success: "success",
+	warning: "warning",
+	error: "error",
+}
 
 export function GetRandomNumber(min = 0, max = 1) {
 	return Math.random() * (max - min + 1) + min
@@ -12,24 +18,7 @@ export function GetRandomNumber(min = 0, max = 1) {
 export function useField(type) {
 	const [value, setValue] = React.useState("")
 
-	const types = {
-		email: {
-			regex: /^[^\s@]+@[^\s@]+\.[^\W_]+$/,
-		},
-		password: {
-			minLength: 12,
-			regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d]{12,}$/,
-		},
-		text: {
-			minLength: 3,
-			maxLength: 64,
-			regex: /^[a-zA-Z](?:[\s-'.][a-zA-Z])*$/,
-		},
-	}
-
-	const onChange = ({ target }) => setValue(target.value)
-
-	return { type, value, onChange }
+	return { type, value, onChange: ({ target }) => setValue(target.value) }
 }
 
 export function useSubmission(url) {
@@ -50,10 +39,14 @@ export function useSubmission(url) {
 		try {
 			await new Promise(($) => setTimeout($, delay))
 			const { data: res } = await axios.post(url, formData)
+			if (res.message) {
+				appendNotification({ type: Color.success, message: res.message })
+			}
+
 			setData(res)
 		} catch (e) {
 			if (e.response.data.error)
-				appendNotification({
+				return appendNotification({
 					type: Color.error,
 					message: e.response.data.error,
 				})
@@ -71,20 +64,24 @@ export function useSubmission(url) {
 }
 
 export function useResource(url) {
-	const [resources, setResources] = React.useState(null)
-	const [loading, setLoading] = React.useState(false)
+	const [resource, setResource] = React.useState(null)
+	const [processing, setProcessing] = React.useState(false)
 	const { appendNotification } = useNotify()
 
 	function debounce(cb) {
 		const delay = GetRandomNumber(1000, 2000)
 
 		return async (...args) => {
-			setLoading(true)
-			setResources(null)
+			setProcessing(true)
+			setResource(null)
 
 			try {
 				await new Promise(($) => setTimeout($, delay))
-				await cb(...args)
+				const { data } = await cb(...args)
+				if (data.message) {
+					appendNotification({ type: Color.success, message: data.message })
+				}
+				setResource(data)
 			} catch (err) {
 				if (err.response.data.error)
 					return appendNotification({
@@ -97,35 +94,23 @@ export function useResource(url) {
 					message: err.message,
 				})
 			} finally {
-				setLoading(false)
+				setProcessing(false)
 			}
 		}
 	}
 
 	const services = {
-		fetchResources: debounce(async () => {
-			const response = await axios.get(url)
-			setResources(response.data)
-		}),
-		updateResource: debounce(async (resourceId, updatedData) => {
-			const response = await axios.patch(`${url}/${resourceId}`, updatedData)
-			setResources(response.data)
-		}),
-		createResource: debounce(async (newData) => {
-			const response = await axios.post(url, newData)
-			setResources(response.data)
-		}),
-		deleteResource: debounce(async (resourceId) => {
-			const response = await axios.delete(`${url}/${resourceId}`)
-			setResources(response.data)
-		}),
+		fetchResources: debounce(async () => await axios.get(url)),
+		updateResource: debounce(async (resourceId, updatedData) => await axios.patch(`${url}/${resourceId}`, updatedData)),
+		createResource: debounce(async (newData) => await axios.post(url, newData)),
+		deleteResource: debounce(async (resourceId) => await axios.delete(`${url}/${resourceId}`)),
 	}
 
 	React.useEffect(() => {
 		services.fetchResources()
 	}, [url])
 
-	return [resources, services, loading]
+	return { resource, services, processing }
 }
 
 export function mergedSetTimeout(action1Fn, action2Fn, delay1, delay2) {

@@ -198,9 +198,7 @@ const LoaderWrapper = styled.div`
 
 function RiskScoreSlider() {
 	const [score, setScore] = React.useState(6)
-	const [scoreData, services, loading, error] = useResource(`/risks/${score}`)
-
-	React.useEffect(() => services.fetchtResources, [score])
+	const { resource, processing } = useResource(`/risks/${score}`)
 
 	return (
 		<div style={{ alignSelf: "start" }}>
@@ -224,61 +222,60 @@ function RiskScoreSlider() {
 				</label>
 			</SliderWrapper>
 			<RiskDetails aria-live="polite">
-				{loading && !scoreData && !error && (
+				{processing && !resource && (
 					<LoaderWrapper>
 						<Spinner />
 						<p>Calibrating portfolio...</p>
 					</LoaderWrapper>
 				)}
-				{!loading && scoreData && !error && (
+				{!processing && resource && (
 					<div className="score-data">
 						<div>
 							<span>Nigerian Stocks:</span>
-							<i data-percentage={scoreData.stocks.local + "%"} style={{ width: `${scoreData.stocks.local}%` }} />
+							<i data-percentage={resource.stocks.local + "%"} style={{ width: `${resource.stocks.local}%` }} />
 						</div>
 						<div>
 							<span>Foreign Stocks:</span>
-							<i data-percentage={scoreData.stocks.foreign + "%"} style={{ width: `${scoreData.stocks.foreign}%` }} />
+							<i data-percentage={resource.stocks.foreign + "%"} style={{ width: `${resource.stocks.foreign}%` }} />
 						</div>
 						<div>
 							<span>Tech Stocks:</span>
-							<i data-percentage={scoreData.stocks.tech + "%"} style={{ width: `${scoreData.stocks.tech}%` }} />
+							<i data-percentage={resource.stocks.tech + "%"} style={{ width: `${resource.stocks.tech}%` }} />
 						</div>
 						<div>
 							<span>Emerging Stocks:</span>
-							<i data-percentage={scoreData.stocks.emerging + "%"} style={{ width: `${scoreData.stocks.emerging}%` }} />
+							<i data-percentage={resource.stocks.emerging + "%"} style={{ width: `${resource.stocks.emerging}%` }} />
 						</div>
 						<div>
 							<span>Nigerian Bonds:</span>
-							<i data-percentage={scoreData.bonds.local + "%"} style={{ width: `${scoreData.bonds.local}%` }} />
+							<i data-percentage={resource.bonds.local + "%"} style={{ width: `${resource.bonds.local}%` }} />
 						</div>
 						<div>
 							<span>Foreign Bonds:</span>
-							<i data-percentage={scoreData.bonds.foreign + "%"} style={{ width: `${scoreData.bonds.foreign}%` }} />
+							<i data-percentage={resource.bonds.foreign + "%"} style={{ width: `${resource.bonds.foreign}%` }} />
 						</div>
 						<div>
 							<span>Commodities</span>
-							<i data-percentage={scoreData.commodities + "%"} style={{ width: `${scoreData.commodities}%` }} />
+							<i data-percentage={resource.commodities + "%"} style={{ width: `${resource.commodities}%` }} />
 						</div>
 						<div>
 							<span>Real Estate:</span>
-							<i data-percentage={scoreData["real estate"] + "%"} style={{ width: `${scoreData["real estate"]}%` }} />
+							<i data-percentage={resource["real estate"] + "%"} style={{ width: `${resource["real estate"]}%` }} />
 						</div>
 						<div>
 							<span>T-Bills:</span>
-							<i data-percentage={scoreData["t-bills"] + "%"} style={{ width: `${scoreData["t-bills"]}%` }} />
+							<i data-percentage={resource["t-bills"] + "%"} style={{ width: `${resource["t-bills"]}%` }} />
 						</div>
 						<div>
 							<span>Alternative:</span>
-							<i data-percentage={scoreData.alternative + "%"} style={{ width: `${scoreData.alternative}%` }} />
+							<i data-percentage={resource.alternative + "%"} style={{ width: `${resource.alternative}%` }} />
 						</div>
 					</div>
 				)}
-				{!loading && !scoreData && error && (
+				{!processing && !resource && (
 					<LoaderWrapper>
 						<Error />
 						<div>
-							<span>{error}</span>
 							<p>Something went wrong, adjust the slider to try again.</p>
 						</div>
 					</LoaderWrapper>

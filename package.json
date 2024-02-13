@@ -4,8 +4,7 @@
 	"private": "true",
 	"workspaces": [
 		"server",
-		"client",
-		"shared_utils"
+		"client"
 	],
 	"scripts": {
 		"dev:server": "yarn workspace @afroinvest/server dev",

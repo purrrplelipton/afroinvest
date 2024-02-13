@@ -1,10 +1,16 @@
-import { Schema, model } from "mongoose"
+import mongoose from "mongoose"
 
-const UserSchema = new Schema({
-	fullName: { required: true, type: String },
-	email: { required: true, type: String, unique: true },
-	password: { required: true, type: String },
-})
+const { Schema, model } = mongoose
+
+const UserSchema = new Schema(
+	{
+		fullName: { required: true, type: String },
+		email: { required: true, type: String, unique: true },
+		password: { required: true, type: String },
+		confirmed: { required: true, type: Boolean, default: false },
+	},
+	{ timestamps: true },
+)
 
 const UserModel = model("User", UserSchema)
 
