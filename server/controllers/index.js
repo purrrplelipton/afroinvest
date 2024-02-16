@@ -5,7 +5,7 @@ import sanitize from "sanitize-html"
 import validator from "validator"
 import { RiskModel, UserModel } from "../models/index.js"
 import { AUTH_USER, EMAIL_SECRET, HASH_COMPLEXITY, PASSWORD_SECRET } from "../utils/config.js"
-import { transporter } from "../utils/middleware.js"
+import { ConfirmationEmailTemplate, transporter } from "../utils/middleware.js"
 
 const { sign, verify } = jsonwebtoken
 const { isEmail } = validator
@@ -96,14 +96,7 @@ $.post("/users/authorize", async ({ body }, res) => {
 					from: `AfroInvest <${AUTH_USER}>`,
 					to: newUser.email,
 					subject: "Account Confirmation for AfroInvest",
-					html: `
-						<h1>Hi, ${firstName}!</h1>
-						<p>Welcome to AfroInvest! Please confirm your email address to activate your account and unlock full access.</p>
-						<p>Click the link below to confirm your email:</p>
-						<a href="https://afroinvest.onrender.com/SignUp/EmailConfirmation/${token}">confirm Email</a>
-						<p>This link will expire in 24 hours.</p>
-						<p>Thanks,</p>
-						<p>The AfroInvest Team</p>`,
+					html: ConfirmationEmailTemplate(firstName, newUser.email, token),
 				})
 
 				return res.status(201).json({ message: `Welcome, ${firstName}! Check your email for confirmation.` })
@@ -178,39 +171,10 @@ $.post("/resend/confirmation", async ({ body }, res) => {
 		const token = sign({ id: user._id }, EMAIL_SECRET, { expiresIn: "1d" })
 
 		await transporter.sendMail({
-			from: `AfroInvest ${AUTH_USER}`,
+			from: `AfroInvest <${AUTH_USER}>`,
 			to: user.email,
 			subject: "Account Confirmation for AfroInvest",
-			html: `
-				<header style="position: fixed;inset: 0 0 auto 0;background-image: linear-gradient(to bottom, #fff, transparent);">
-					<div style="width: 87.5%;margin: auto;max-width: 1280px;padding-block: 20px;">
-						<a
-							href="https://afroinvest.onrender.com/"
-							target="_blank"
-							rel="noopener noreferrer"
-							style="color: inherit;text-decoration: none;"
-							>
-								<span style="font-size: 2.5em;height: 0.800375em;line-height: 1;font-weight: 900;">Ai</span>
-						</a>
-					</div>
-				</header>
-				<main style="width: 87.5%;margin: auto;max-width: 1280px;text-align: center;">
-					<h1>Hi, ${firstName}!</h1>
-					<p>Welcome to AfroInvest! Please confirm your email address to activate your account and unlock full access.</p>
-					<p>Click the link below to confirm your email:</p>
-					<a
-						href="https://afroinvest.onrender.com/SignUp/EmailConfirmation/${token}"
-						target="_blank"
-						rel="noopener noreferrer"
-						style="color: #fff;text-decoration: none;background-color: hsl(208, 100%, 22%);border-radius: 10px;padding: 0.75em 1em 0.625em;"
-						>
-							<span>Confirm Email</span>
-					</a>
-					<p>This link will expire in 24 hours.</p>
-					<p>Thanks,</p>
-					<p>The AfroInvest Team</p>
-				</main>
-			`,
+			html: ConfirmationEmailTemplate(firstName, user.email, token),
 		})
 
 		res.status(200).json({ message: "Confirmation email resent successfully" })
