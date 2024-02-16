@@ -3,8 +3,7 @@ import { ReactComponent as Underline } from "@app/assets/underline.svg"
 import { BlueBtn, GoBack } from "@app/components/common/button"
 import Spinner from "@app/components/common/spinner"
 import Wrapper from "@app/components/common/wrapper"
-import { useNotify } from "@app/context/notify-context"
-import { Color, useField, useSubmission } from "@app/hooks"
+import { useField, useResource } from "@app/hooks"
 import React from "react"
 import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
@@ -201,12 +200,11 @@ function SignIn() {
 	const navigate = useNavigate()
 	const email = useField("email")
 	const password = useField("password")
-	const { appendNotification } = useNotify()
 	const [formData, setFormData] = React.useState({
 		email: email.value,
 		password: password.value,
 	})
-	const { handleSubmit, processing, data } = useSubmission("users/authenticate")
+	const [, services, processing] = useResource("users/authenticate")
 
 	React.useEffect(() => {
 		setFormData({
@@ -215,28 +213,14 @@ function SignIn() {
 		})
 	}, [email.value, password.value])
 
-	const handleSignIn = async (e) => {
-		const fieldReset = { target: { value: "" } }
+	const handleSignIn = async (evt) => {
+		evt.preventDefault()
 
-		try {
-			await handleSubmit(e, formData)
-			setTimeout(() => {
-				if (data && data.message) {
-					email.onChange(fieldReset)
-					password.onChange(fieldReset)
-					navigate("/", { replace: true })
-				}
-			}, 555)
-		} catch (e) {
-			const { error } = console
-			if (e.response && e.response.data.error) {
-				error("API error:", e.response.data.error)
-				appendNotification({ type: Color.error, message: e.response.data.error })
-			} else {
-				error("Error:", e.message)
-				appendNotification({ type: Color.error, message: "An error occurred." })
-			}
-		}
+		services.create(formData).then(() => {
+			email.onChange({ target: { value: "" } })
+			password.onChange({ target: { value: "" } })
+			navigate("/", { replace: true })
+		})
 	}
 
 	return (

@@ -198,7 +198,20 @@ const LoaderWrapper = styled.div`
 
 function RiskScoreSlider() {
 	const [score, setScore] = React.useState(6)
-	const { resource, processing } = useResource(`/risks/${score}`)
+	const [resource, services, processing] = useResource(`/risks/${score}`)
+	const [error, setError] = React.useState(null)
+
+	const handleFetch = React.useCallback(() => {
+		return async function () {
+			try {
+				await services.fetch()
+			} catch (e) {
+				setError(e)
+			}
+		}
+	}, [services, score])
+
+	React.useEffect(() => handleFetch(), [score])
 
 	return (
 		<div style={{ alignSelf: "start" }}>
@@ -222,7 +235,7 @@ function RiskScoreSlider() {
 				</label>
 			</SliderWrapper>
 			<RiskDetails aria-live="polite">
-				{processing && !resource && (
+				{processing && (
 					<LoaderWrapper>
 						<Spinner />
 						<p>Calibrating portfolio...</p>
@@ -272,7 +285,7 @@ function RiskScoreSlider() {
 						</div>
 					</div>
 				)}
-				{!processing && !resource && (
+				{!processing && !resource && error && (
 					<LoaderWrapper>
 						<Error />
 						<div>

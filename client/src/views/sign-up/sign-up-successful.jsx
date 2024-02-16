@@ -3,7 +3,7 @@ import { BlueBtn } from "@app/components/common/button"
 import Logo from "@app/components/common/logo"
 import Spinner from "@app/components/common/spinner"
 import Wrapper from "@app/components/common/wrapper"
-import { useSubmission } from "@app/hooks"
+import { useResource } from "@app/hooks"
 import React from "react"
 import { Link, useLocation } from "react-router-dom"
 import styled from "styled-components"
@@ -47,10 +47,11 @@ const Container = styled(Wrapper)`
 				& + div {
 					p {
 						margin-block: 24px 10px;
+						text-decoration: underline;
 						font-weight: 900;
 
 						& + button {
-							text-decoration: underline;
+							min-width: 12ch;
 						}
 					}
 				}
@@ -83,23 +84,23 @@ const Container = styled(Wrapper)`
 
 function SignUpSuccessful() {
 	const location = useLocation()
-	const { handleSubmit, processing } = useSubmission("resend/confirmation")
+	const [, services, processing] = useResource("resend/confirmation")
 
-	React.useEffect(() => {
-		const ClearEmail = () => {
-			if (location.state && location.state.email) {
-				const updatedState = {}
-				const stateKeys = Object.keys(location.state)
-				stateKeys.forEach((key) => {
-					if (key !== "email") return (updatedState[key] = location.state[key])
-				})
+	// React.useEffect(() => {
+	// 	let isInitialLoad = true
 
-				location.state = updatedState
-			}
-		}
+	// 	return () => {
+	// 		if (isInitialLoad) return (isInitialLoad = false)
 
-		return ClearEmail
-	}, [location.state])
+	// 		const updatedState = {}
+	// 		const stateKeys = Object.keys(location.state)
+	// 		stateKeys.forEach((key) => {
+	// 			if (key !== "email") return (updatedState[key] = location.state[key])
+	// 		})
+
+	// 		location.state = updatedState
+	// 	}
+	// }, [location.state])
 
 	return (
 		<>
@@ -120,17 +121,9 @@ function SignUpSuccessful() {
 							<div>
 								<p>Didn&apos;t get the email?</p>
 								<BlueBtn
-									onClick={async (e) => {
+									onClick={() => {
 										const { email } = location.state || {}
-
-										try {
-											if (email) {
-												await handleSubmit(e, { email })
-											}
-										} catch (e) {
-											const { error } = console
-											error(e.message)
-										}
+										services.create({ email })
 									}}
 								>
 									{processing ? <Spinner /> : <span>Resend Confirmation Email</span>}

@@ -5,8 +5,7 @@ import { BlueBtn, Btn, GoBack } from "@app/components/common/button"
 import Spinner from "@app/components/common/spinner"
 import StrengthMeter from "@app/components/common/strength-meter"
 import Wrapper from "@app/components/common/wrapper"
-import { useNotify } from "@app/context/notify-context"
-import { Color, useField, useSubmission } from "@app/hooks"
+import { useField, useResource } from "@app/hooks"
 import React from "react"
 import { Link, Route, Routes, useNavigate } from "react-router-dom"
 import styled from "styled-components"
@@ -216,7 +215,6 @@ const SignUpForm = () => {
 	const fullName = useField("text")
 	const email = useField("email")
 	const password = useField("password")
-	const { appendNotification } = useNotify()
 	const [passwordVisible, setPasswordVisible] = React.useState(false)
 	const [formData, setFormData] = React.useState({
 		fullName: fullName.value,
@@ -224,7 +222,7 @@ const SignUpForm = () => {
 		password: password.value,
 	})
 
-	const { handleSubmit, processing, data } = useSubmission("users/authorize")
+	const [, services, processing] = useResource("users/authorize")
 
 	React.useEffect(() => {
 		setFormData({
@@ -234,29 +232,18 @@ const SignUpForm = () => {
 		})
 	}, [fullName.value, email.value, password.value])
 
-	const handleSignUp = async (e) => {
-		const fieldReset = { target: { value: "" } }
+	const handleSignUp = async (evt) => {
+		evt.preventDefault()
 
-		try {
-			await handleSubmit(e, formData)
-			setTimeout(() => {
-				if (data && data.message) {
-					fullName.onChange(fieldReset)
-					password.onChange(fieldReset)
-					setTimeout(() => email.onChange(fieldReset), 1111)
-					navigate("Successful", { state: { email: formData.email }, replace: true })
-				}
-			}, 555)
-		} catch (e) {
-			const { error } = console
-			if (e.response && e.response.data.error) {
-				error("API error:", e.response.data.error)
-				appendNotification({ type: Color.error, message: e.response.data.error })
-			} else {
-				error("Error:", e.message)
-				appendNotification({ type: Color.error, message: "An error occurred." })
-			}
-		}
+		services.create(formData).then(() => {
+			fullName.onChange({ target: { value: "" } })
+			password.onChange({ target: { value: "" } })
+			setTimeout(() => email.onChange({ target: { value: "" } }), 1111)
+			navigate("Successful", {
+				state: { email: formData.email },
+				replace: true,
+			})
+		})
 	}
 
 	return (

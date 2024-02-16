@@ -77,7 +77,7 @@ const Container = styled(Wrapper)`
 function EmailConfirmation() {
 	const { token } = useParams()
 
-	const { resource, processing } = useResource(`/confirm/${token}`)
+	const [resource, , processing] = useResource(`/confirm/${token}`)
 
 	return (
 		<>

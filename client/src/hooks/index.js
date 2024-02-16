@@ -12,105 +12,95 @@ export const Color = {
 }
 
 export function GetRandomNumber(min = 0, max = 1) {
-	return Math.random() * (max - min + 1) + min
+	if (min > max) [min, max] = [max, min]
+
+	return Math.random() * (max - min) + min
 }
 
 export function useField(type) {
 	const [value, setValue] = React.useState("")
 
-	return { type, value, onChange: ({ target }) => setValue(target.value) }
-}
-
-export function useSubmission(url) {
-	const [processing, setProcessing] = React.useState(false)
-	const [data, setData] = React.useState(null)
-	const { appendNotification } = useNotify()
-
-	const submitHandler = async (e, formData) => {
-		e.preventDefault()
-
-		if (processing) return
-
-		setData(null)
-		setProcessing(true)
-
-		const delay = GetRandomNumber(1000, 2000)
-
-		try {
-			await new Promise(($) => setTimeout($, delay))
-			const { data: res } = await axios.post(url, formData)
-			if (res.message) {
-				appendNotification({ type: Color.success, message: res.message })
-			}
-
-			setData(res)
-		} catch (e) {
-			if (e.response.data.error)
-				return appendNotification({
-					type: Color.error,
-					message: e.response.data.error,
-				})
-
-			appendNotification({
-				type: Color.error,
-				message: e.message,
-			})
-		} finally {
-			setProcessing(false)
-		}
+	return {
+		type,
+		value,
+		onChange: React.useCallback(({ target }) => setValue(target.value), [value, setValue]),
 	}
-
-	return { handleSubmit: async (e, formData) => await submitHandler(e, formData), processing, data }
 }
 
-export function useResource(url) {
+export function useResource(apiRoute) {
 	const [resource, setResource] = React.useState(null)
 	const [processing, setProcessing] = React.useState(false)
 	const { appendNotification } = useNotify()
 
-	function debounce(cb) {
-		const delay = GetRandomNumber(1000, 2000)
+	const debounceFN = React.useCallback(async (config) => {
+		setProcessing(true)
+		setResource(null)
 
-		return async (...args) => {
-			setProcessing(true)
-			setResource(null)
+		try {
+			await new Promise(($) => setTimeout($, GetRandomNumber(1000, 2000)))
+			const response = await axios(config)
+			if (response.data.message) appendNotification({ type: Color.success, message: response.data.message })
+			setResource(response.data)
+			return response
+		} catch (error) {
+			if (error.response && error.response.data.error)
+				appendNotification({ type: Color.error, message: error.response.data.error })
+			else appendNotification({ type: Color.error, message: error.message })
 
-			try {
-				await new Promise(($) => setTimeout($, delay))
-				const { data } = await cb(...args)
-				if (data.message) {
-					appendNotification({ type: Color.success, message: data.message })
-				}
-				setResource(data)
-			} catch (err) {
-				if (err.response.data.error)
-					return appendNotification({
-						type: Color.error,
-						message: err.response.data.error,
-					})
-
-				appendNotification({
-					type: Color.error,
-					message: err.message,
-				})
-			} finally {
-				setProcessing(false)
-			}
+			throw error
+		} finally {
+			setProcessing(false)
 		}
-	}
+	}, [])
 
-	const services = {
-		fetchResources: debounce(async () => await axios.get(url)),
-		updateResource: debounce(async (resourceId, updatedData) => await axios.patch(`${url}/${resourceId}`, updatedData)),
-		createResource: debounce(async (newData) => await axios.post(url, newData)),
-		deleteResource: debounce(async (resourceId) => await axios.delete(`${url}/${resourceId}`)),
-	}
+	const fetchResource = React.useCallback(
+		() =>
+			debounceFN({
+				method: "GET",
+				url: apiRoute,
+			}),
+		[apiRoute, debounceFN],
+	)
 
-	React.useEffect(() => {
-		services.fetchResources()
-	}, [url])
+	const createResource = React.useCallback(
+		(newResourceData) =>
+			debounceFN({
+				method: "POST",
+				url: apiRoute,
+				data: newResourceData,
+			}),
+		[apiRoute, debounceFN],
+	)
 
-	return { resource, services, processing }
+	const updateResource = React.useCallback(
+		(resourceId, updates) =>
+			debounceFN({
+				method: "PATCH",
+				url: `${apiRoute}/${resourceId}`,
+				data: updates,
+			}),
+		[apiRoute, debounceFN],
+	)
+
+	const deleteResource = React.useCallback(
+		(resourceId) =>
+			debounceFN({
+				method: "DELETE",
+				url: `${apiRoute}/${resourceId}`,
+			}),
+		[apiRoute, debounceFN],
+	)
+
+	return [
+		resource,
+		{
+			fetch: fetchResource,
+			create: createResource,
+			update: updateResource,
+			delete: deleteResource,
+		},
+		processing,
+	]
 }
 
 export function mergedSetTimeout(action1Fn, action2Fn, delay1, delay2) {

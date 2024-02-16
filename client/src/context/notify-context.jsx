@@ -2,7 +2,7 @@
 import { Check, CircleX, ExclamationMark, Info, X } from "@app/assets/icons"
 import { Btn } from "@app/components/common/button"
 import { Color } from "@app/hooks"
-import { element, func, node, oneOf, oneOfType } from "prop-types"
+import { element, node, oneOfType } from "prop-types"
 import React from "react"
 import styled, { css } from "styled-components"
 import { v4 } from "uuid"
@@ -64,43 +64,6 @@ const NotificationWrapper = styled.div`
 	}
 `
 
-function Notify(props) {
-	const { type, dismissFN, children } = props
-
-	const parsedType = Object.keys(Color).includes(type) ? type : "info"
-
-	const getIcon = (__type) => {
-		switch (__type) {
-			case Color.success:
-				return <Check />
-			case Color.error:
-				return <CircleX />
-			case Color.warning:
-				return <ExclamationMark />
-			default:
-				return <Info />
-		}
-	}
-
-	return (
-		<NotificationWrapper $type={parsedType}>
-			<div>
-				{getIcon(parsedType)}
-				<p>{children}</p>
-			</div>
-			<Btn aria-label="dismiss notification" onClick={dismissFN}>
-				<X />
-			</Btn>
-		</NotificationWrapper>
-	)
-}
-
-Notify.propTypes = {
-	type: oneOf(Object.keys(Color)).isRequired,
-	dismissFN: func.isRequired,
-	children: oneOfType([node, element]).isRequired,
-}
-
 const Container = styled.div`
 	font-size: 0.875em;
 	position: fixed;
@@ -124,10 +87,9 @@ function NotifyProvider(props) {
 	const [notifications, setNotifications] = React.useState([])
 
 	const appendNotification = ({ type, message }) =>
-		setNotifications((prevNotifications) => [{ id: v4(), type, message }, ...prevNotifications])
+		setNotifications((prvNtfs) => [{ id: v4(), type, message }, ...prvNtfs])
 
-	const dismissNotification = (id) =>
-		setNotifications((prevNotifications) => prevNotifications.filter((notification) => notification.id !== id))
+	const dismissNotification = (id) => setNotifications((prvNtfs) => prvNtfs.filter((ntf) => ntf.id !== id))
 
 	const [dismissQueue, setDismissQueue] = React.useState([])
 
@@ -154,17 +116,40 @@ function NotifyProvider(props) {
 		return () => clearInterval(timeoutId)
 	}, [notifications, dismissQueue])
 
+	const getIcon = (ntfType) => {
+		switch (ntfType) {
+			case Color.success:
+				return <Check />
+			case Color.error:
+				return <CircleX />
+			case Color.warning:
+				return <ExclamationMark />
+			default:
+				return <Info />
+		}
+	}
+
 	return (
 		<NotifyContext.Provider value={{ notifications, appendNotification, dismissNotification }}>
 			<>
 				{notifications.length > 0 && (
 					<Container>
 						<div>
-							{notifications.map(({ id, ...rs }) => (
-								<Notify key={id} type={rs.type} dismissFN={() => setDismissQueue((prv) => [id, ...prv])}>
-									{rs.message}
-								</Notify>
-							))}
+							{notifications.map((ntf) => {
+								const parsedType = Object.keys(Color).includes(ntf.type) ? ntf.type : "info"
+
+								return (
+									<NotificationWrapper key={ntf.id} $type={parsedType}>
+										<div>
+											{getIcon(parsedType)}
+											<p>{ntf.message}</p>
+										</div>
+										<Btn aria-label="dismiss notification" onClick={() => setDismissQueue((prv) => [ntf.id, ...prv])}>
+											<X />
+										</Btn>
+									</NotificationWrapper>
+								)
+							})}
 						</div>
 					</Container>
 				)}
